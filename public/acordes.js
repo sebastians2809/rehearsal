@@ -52,7 +52,7 @@ function sound(m,when,dur,vol){R.audioReady();R.inst.note(S.snd,m,when||0,dur||1
 /* ----- teclado ----- */
 function keyboard(opts){
   /* opts: mids (midis resaltados), fing (map midi->dedo), start, pressed (map pc? midi->true), hide(names) */
-  var start=opts.start||60,end=start+24,W=44,H=190,BW=28,BH=118,wi=0,wh='',bl='';
+  var start=opts.start||60,end=start+(opts.span||24),W=44,H=190,BW=28,BH=118,wi=0,wh='',bl='';
   var black=[1,3,6,8,10];
   var hl=opts.mids||[];
   var map={};hl.forEach(function(m,i){map[m]=(opts.fing&&opts.fing[i])||0});
@@ -211,5 +211,6 @@ function keyTap(m){
   }else refresh();
 }
 
+R.piano={keyboard:keyboard,voicing:voicing,fingers:fingers,col:col,pcOf:pcOf};
 R.views.acordes={render:function(el){host=el;render(el)}};
 })();
