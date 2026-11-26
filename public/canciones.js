@@ -466,6 +466,7 @@ function importFromHash(){
     return true;
   }catch(e){return false}
 }
+R.songs={parse:parseSong,chords:allChords,key:detectKey,keyName:keyName,list:function(){return songs}};
 R.views.canciones={render:function(el){render(el)},leave:function(){clearTimers();closeSheet()}};
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet()});
 if(R.hasActive&&importFromHash()){R.setTab('canciones');toast('Canción guardada en el cancionero de '+(R.profile?R.profile.name:'tu perfil'))}
