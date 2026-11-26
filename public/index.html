@@ -296,12 +296,16 @@ h3{font-weight:600;font-size:19px}
 .tn-headwrap{display:grid;gap:26px;justify-items:center;width:100%}
 .tn-hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:stretch;height:clamp(220px,34dvh,350px);width:100%;max-width:440px}
 .tn[data-chrom] .tn-hd{display:none}
-.tn-col{display:grid;grid-template-rows:repeat(var(--rows,3),1fr);align-items:center;justify-items:center;width:74px}
+.tn-col{display:grid;grid-template-rows:repeat(var(--rows,3),1fr);align-items:center;justify-items:center;width:74px;height:63.33%;align-self:start;margin-top:1.33%}
 .tn-hd svg{width:100%;height:100%;display:block;overflow:visible}
-.hs-body{fill:color-mix(in srgb,var(--surface-2) 88%,var(--ink));stroke:var(--line);stroke-width:2;vector-effect:non-scaling-stroke}
-.hs-str{fill:none;stroke:var(--string);opacity:.5;vector-effect:non-scaling-stroke;stroke-linecap:round;transition:stroke .15s,opacity .15s}
+.hs-body{fill:url(#hw);stroke:#3b2415;stroke-width:2;vector-effect:non-scaling-stroke;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
+.hs-neck{fill:url(#nk)}
+.hs-fret{fill:none;stroke:#b9b0a2;stroke-width:2;vector-effect:non-scaling-stroke;opacity:.7}
+.hs-grain{fill:none;stroke:#3b2415;stroke-width:1;opacity:.18;vector-effect:non-scaling-stroke}
+.hs-post{fill:#cfd2d8;stroke:#7b7f88;stroke-width:1;vector-effect:non-scaling-stroke}
+.hs-str{fill:none;stroke:#e9e4f2;opacity:.75;vector-effect:non-scaling-stroke;stroke-linecap:round;transition:stroke .15s,opacity .15s}
 .hs-str.on{stroke:var(--c);opacity:1;filter:drop-shadow(0 0 5px var(--c))}
-.hs-nut{fill:var(--pearl);opacity:.85}
+.hs-nut{fill:#efe5d0}
 .peg{position:relative;width:62px;height:62px;border-radius:50%;border:2px solid var(--line);background:var(--surface-2);color:var(--ink);display:grid;place-items:center;padding:0;font:600 22px/1 var(--font-display);transition:background .15s,border-color .15s,transform .1s}
 .peg small{position:absolute;right:9px;bottom:10px;font:700 11px/1 var(--font-ui);color:var(--muted)}
 .peg:active{transform:scale(.94)}
@@ -409,6 +413,46 @@ body.no-scroll{overflow:hidden}
   .bubble,.tn-auto i,.tn-auto i::after,.peg{transition:none}
   .tn-mic[data-on]::after{animation:none}
 }
+
+/* ===== Acordes (piano para aprender) ===== */
+.pa-bar{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;padding:12px 16px}
+.pa-bar .seg{display:inline-flex;width:auto}
+.pa-bar .seg button{min-width:110px}
+.pa-snd{min-width:130px}
+.pa-hero .pa-name{font:600 clamp(34px,8vw,56px)/1.05 var(--font-display);margin:2px 0 4px}
+.pa-steps{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 6px}
+.pa-steps .nt{background:var(--c);color:#1a1230;font:700 22px/1 var(--font-display);border-radius:14px;padding:10px 16px}
+.pa-steps .gap{color:var(--muted);font-weight:800}
+.pa-roots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.pa-root{position:relative;min-height:56px;border-radius:16px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 24%,var(--surface-2));font:600 17px/1 var(--font-display);color:var(--ink);padding:0 2px}
+.pa-root[aria-pressed="true"]{background:var(--c);color:#1a1230;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--c)}
+.pa-root .ok{position:absolute;top:3px;right:6px;font-size:11px;font-style:normal;color:#ffd166}
+.pa-grp h4{margin:12px 0 8px;font:600 14px var(--font-display);color:var(--muted)}
+.pa-wrap{border-radius:14px}
+.pa-wrap svg{min-width:640px;width:100%;height:auto;display:block}
+.pk{cursor:pointer;transition:fill .08s}
+.pk-t{font:700 12px var(--font-ui);text-anchor:middle;pointer-events:none}
+.pk-f{font:700 14px var(--font-ui);fill:#fff;text-anchor:middle;pointer-events:none}
+.pk-oc{font:600 10px var(--font-ui);fill:var(--muted);text-anchor:middle;pointer-events:none}
+.pa-act{margin-top:14px}
+.pa-act .seg{display:inline-flex;width:auto}
+.pa-hint{margin:8px 0 0}
+.pa-prog{display:flex;gap:8px;margin:10px 0 14px}
+.pa-prog i{width:26px;height:26px;border-radius:50%;border:2px solid var(--c);display:block}
+.pa-prog i.on{background:var(--c)}
+.pa-target.won{box-shadow:0 0 0 2px var(--ok),0 16px 48px var(--ok-soft)}
+.pa-streak{margin-left:auto;font-weight:700}
+.tabs .tab span{white-space:nowrap}
+@media (min-width:700px){.tabs{flex:1 1 0;max-width:720px;margin-left:auto}.tab{flex:1 1 auto;min-width:0;padding:8px 10px;gap:6px}}
+@media (min-width:700px) and (max-width:979px){.brand h1{display:none}}
+@media (max-width:699px){
+  .pa-roots{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .pa-bar .seg{flex:1}
+  .pa-bar .seg button{min-width:0;flex:1}
+  .pa-act .seg{display:flex;width:100%}
+  .tab{font-size:10.5px}
+  .tab svg{width:19px;height:19px}
+}
 </style>
 </head>
 <body>
@@ -445,6 +489,8 @@ body.no-scroll{overflow:hidden}
       <button class="tab" role="tab" data-tab="tonalidad" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Tonalidad</span></button>
       <button class="tab" role="tab" data-tab="guitarra" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M7 8h10M7 13h10M7 18h10M10.5 2.5v19M13.5 2.5v19"/></svg><span>Guitarra</span></button>
       <button class="tab" role="tab" data-tab="piano" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8.5 5v14M15.5 5v14"/><path d="M8.5 5v7M15.5 5v7" stroke-width="3.2"/></svg><span>Piano</span></button>
+      <button class="tab" role="tab" data-tab="canciones" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg><span>Canciones</span></button>
+      <button class="tab" role="tab" data-tab="estudio" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg><span>Estudio</span></button>
     </nav>
     <button class="icon-btn" data-act="theme" aria-label="Cambiar entre tema oscuro y claro"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
   </header>
@@ -513,6 +559,8 @@ body.no-scroll{overflow:hidden}
     <section id="view-tonalidad" class="view" role="tabpanel" aria-label="Tonalidad" hidden></section>
     <section id="view-guitarra" class="view" role="tabpanel" aria-label="Guitarra" hidden></section>
     <section id="view-piano" class="view" role="tabpanel" aria-label="Piano" hidden></section>
+    <section id="view-canciones" class="view" role="tabpanel" aria-label="Canciones" hidden></section>
+    <section id="view-estudio" class="view" role="tabpanel" aria-label="Estudio" hidden></section>
   </main>
 </div>
 
@@ -878,6 +926,7 @@ var state={
   vi:0,
   tuning:store.get('tuning','std'),
   a4:store.get('a4',440),
+  pmode:store.get('pmode','acordes')==='escalas'?'escalas':'acordes',
   theme:store.get('theme','dark')==='light'?'light':'dark',
   tview:store.get('tview','head')==='spec'?'spec':'head',
   target:null
@@ -1177,13 +1226,21 @@ function pianoSVG(ctx,chord){
   return '<svg viewBox="0 0 '+(wi*W)+' '+(H+24)+'" role="img" aria-label="Teclado de piano con '+esc(titleOf(ctx))+'">'+whites+blacks+'</svg>';
 }
 
+function pianoBar(){
+  return '<div class="card pa-bar pa-top"><div class="seg" role="group" aria-label="Sección del piano"><button data-act="pmode" data-v="acordes" aria-pressed="'+(state.pmode==='acordes')+'">Acordes</button><button data-act="pmode" data-v="escalas" aria-pressed="'+(state.pmode==='escalas')+'">Escalas</button></div></div>';
+}
 function renderPiano(ctx){
   var v=document.getElementById('view-piano');
+  if(state.pmode!=='escalas'){
+    v.innerHTML='<div class="stack">'+pianoBar()+'<div id="pa-root"></div></div>';
+    var AV=window.REH&&REH.views.acordes;if(AV)AV.render(document.getElementById('pa-root'));
+    return;
+  }
   var chord=getChord(ctx);
   var legend='<div class="legend"><span><i style="background:var(--root)"></i>Tónica</span>'
     +(chord?'<span><i style="background:var(--accent)"></i>Notas del acorde</span>':'')
     +'<span><i style="background:var(--accent-soft);border:1px solid var(--key-edge)"></i>Notas de la escala</span><span>Toca una tecla para escucharla</span></div>';
-  v.innerHTML='<div class="stack">'+pickerHTML(ctx,chord,'p')
+  v.innerHTML='<div class="stack">'+pianoBar()+pickerHTML(ctx,chord,'p')
     +'<div class="card"><h3>Teclado: '+esc(titleOf(ctx))+'</h3>'+legend+'<div class="scroll-x piano">'+pianoSVG(ctx,chord)+'</div></div>'
     +'<div class="card">'+chordInfoHTML(chord,ctx)+(chord?'<button class="btn" data-act="play-chord">'+PLAY+'Escuchar acorde</button>':'')+'</div></div>';
   var sc=v.querySelector('.scroll-x.piano');
@@ -1225,14 +1282,21 @@ function renderHead(){
   function peg(i){
     return '<button class="peg" id="peg-'+i+'" data-act="tstr" data-v="'+i+'" aria-label="Cuerda '+(i+1)+': '+midiName(t.s[i],t.flats)+midiOct(t.s[i])+'">'+midiName(t.s[i],t.flats)+'<small>'+midiOct(t.s[i])+'</small></button>';
   }
-  var lines='';
+  var lines='',posts='',sp=48/Math.max(n-1,1);
   function str(i,k,left){
-    var y=((k+.5)/h*300).toFixed(1),x0=left?6:174,x1=(90+(i-(n-1)/2)*7).toFixed(1);
-    return '<path class="hs-str" id="hs-'+i+'" stroke-width="'+(3.2-i*(2.2/Math.max(n-1,1))).toFixed(2)+'" d="M'+x0+' '+y+' L'+x1+' 300"/>';
+    var y=((k+.5)/h*190+4).toFixed(1),x0=left?50:130,x1=(90+(i-(n-1)/2)*sp).toFixed(1);
+    posts+='<circle cx="'+x0+'" cy="'+y+'" r="4.2" class="hs-post"/>';
+    return '<path class="hs-str" id="hs-'+i+'" stroke-width="'+(3-i*(2/Math.max(n-1,1))).toFixed(2)+'" d="M'+x0+' '+y+' L'+x1+' 200 L'+x1+' 300"/>';
   }
   L.forEach(function(si,k){lines+=str(si,k,true)});
   R.forEach(function(si,k){lines+=str(si,k,false)});
-  var svg='<svg viewBox="0 0 180 300" preserveAspectRatio="none" aria-hidden="true"><path class="hs-body" d="M6 10 Q90 -4 174 10 L178 190 Q180 238 126 260 L122 300 L58 300 L54 260 Q0 238 2 190 Z"/>'+lines+'<rect class="hs-nut" x="52" y="292" width="76" height="8" rx="3"/></svg>';
+  var svg='<svg viewBox="0 0 180 300" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hw" x1="0" x2="1"><stop offset="0" stop-color="#7a4a2a"/><stop offset=".5" stop-color="#9a6238"/><stop offset="1" stop-color="#6c4125"/></linearGradient><linearGradient id="nk" x1="0" x2="1"><stop offset="0" stop-color="#2f1c14"/><stop offset=".5" stop-color="#43281c"/><stop offset="1" stop-color="#2a1912"/></linearGradient></defs>'
+    +'<path class="hs-neck" d="M60 196 H120 V300 H60 Z"/>'
+    +'<path class="hs-fret" d="M60 232H120M60 262H120M60 290H120"/>'
+    +'<path class="hs-body" d="M62 202 L62 180 C62 150 42 140 38 108 L33 42 Q31 12 66 7 Q90 3 114 7 Q149 12 147 42 L142 108 C138 140 118 150 118 180 L118 202 Z"/>'
+    +'<path class="hs-grain" d="M70 24V170M90 14V180M110 24V170"/>'
+    +'<rect class="hs-nut" x="58" y="196" width="64" height="6" rx="2"/>'
+    +posts+lines+'</svg>';
   box.style.setProperty('--rows',h);
   box.innerHTML='<div class="tn-col" style="--rows:'+h+'">'+L.map(peg).join('')+'</div>'+svg+'<div class="tn-col" style="--rows:'+h+'">'+R.map(peg).join('')+'</div>';
 }
@@ -1453,7 +1517,10 @@ function drawTuner(){
 function render(){
   var ae=document.activeElement&&document.activeElement.id;
   if(state.tab!=='afinador'){
+    var VW=window.REH&&REH.views[state.tab];
+    if(VW&&state.tab!=='piano'){VW.render(document.getElementById('view-'+state.tab));return}
     var ctx=context();
+    syncKeybar();
     renderKeybar();
     if(state.tab==='tonalidad')renderTonalidad(ctx);
     else if(state.tab==='guitarra')renderGuitar(ctx);
@@ -1461,13 +1528,19 @@ function render(){
     if(ae){var el=document.getElementById(ae);if(el&&el.focus)el.focus()}
   }
 }
+var TABS=['afinador','tonalidad','guitarra','piano','canciones','estudio'];
+function syncKeybar(){
+  var t=state.tab,hide=(t==='afinador'||t==='canciones'||t==='estudio'||(t==='piano'&&state.pmode!=='escalas'));
+  document.getElementById('keybar').hidden=hide;
+}
 function setTab(t){
-  if(['afinador','tonalidad','guitarra','piano'].indexOf(t)<0)t='afinador';
+  if(TABS.indexOf(t)<0)t='afinador';
+  var prev=window.REH&&REH.views[state.tab];if(prev&&prev.leave&&state.tab!==t)prev.leave();
   if(state.tab==='afinador'&&t!=='afinador')Tuner.stop();
   state.tab=t;
   Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-tab')===t))});
-  ['afinador','tonalidad','guitarra','piano'].forEach(function(id){document.getElementById('view-'+id).hidden=(id!==t)});
-  document.getElementById('keybar').hidden=(t==='afinador');
+  TABS.forEach(function(id){document.getElementById('view-'+id).hidden=(id!==t)});
+  syncKeybar();
   document.body.classList.toggle('tn-on',t==='afinador');
   if(t==='afinador')setTimeout(drawTuner,0);
   render();
@@ -1506,6 +1579,8 @@ function onAct(el){
     case 'play-prog':
       var pr=progressions(C().root.l,C().root.a,C().sc,C().dia,false)[+val];
       if(pr){audioCtx();playProg(pr.chords)}break;
+    case 'pmode':
+      state.pmode=val;store.set('pmode',val);syncKeybar();render();break;
     case 'goto':
       setTab(val);window.scrollTo(0,0);break;
     case 'tview':
@@ -1580,14 +1655,22 @@ function init(){
   document.addEventListener('visibilitychange',function(){if(document.hidden&&Tuner.on)Tuner.stop()});
 
   var start=(location.hash||'').replace('#','');
-  setTab(['afinador','tonalidad','guitarra','piano'].indexOf(start)>=0?start:'afinador');
+  setTab(TABS.indexOf(start)>=0?start:'afinador');
 }
 
+window.REH={views:{},store:store,state:state,esc:esc,mod:mod,spell:spell,buildChord:buildChord,CT:CT,ROOTS:ROOTS,ES:ES,LET:LET,LPC:LPC,
+  scaleNotes:scaleNotes,SCALES:SCALES,scaleById:scaleById,rootByKey:rootByKey,voicings:voicings,diagramSVG:diagramSVG,chordMidis:chordMidis,
+  midiFreq:midiFreq,midiName:midiName,PLAY:PLAY,playFreq:playFreq,playChord:playChord,
+  audio:function(){return actx},master:function(){return master},audioReady:function(){return audioCtx()},
+  refresh:function(){render()},setTab:setTab,acc:acc};
 if(typeof document!=='undefined'&&document.getElementById&&document.getElementById('tuner')){init()}
 if(typeof module!=='undefined'&&module.exports){
   module.exports={spell:spell,scaleNotes:scaleNotes,diatonic:diatonic,buildChord:buildChord,voicings:voicings,detect:detect,progressions:progressions,signature:signature,scaleById:scaleById,rootByKey:rootByKey,CT:CT,SCALES:SCALES,ROOTS:ROOTS};
 }
 })();
 </script>
+<script src="synth.js"></script>
+<script src="acordes.js"></script>
+<script>if(window.REH&&REH.refresh)REH.refresh();</script>
 </body>
 </html>
