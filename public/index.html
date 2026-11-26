@@ -524,6 +524,18 @@ body.no-scroll{overflow:hidden}
   .st-chords{grid-template-columns:repeat(2,minmax(0,1fr))}
   .st-r{margin-left:0;width:100%;justify-content:space-between}
 }
+
+/* ===== Guitarra: notas ===== */
+.gn-wrap svg{min-width:780px;width:100%;height:auto;display:block}
+.gn-n{cursor:pointer}
+.gn-hit{fill:transparent}
+.gn-dot{fill:var(--c);stroke:rgba(0,0,0,.25);stroke-width:1.5}
+.gn-n.good .gn-dot{fill:var(--ok);stroke:#fff;stroke-width:3}
+.gn-n.bad .gn-dot{fill:#ff6b6b}
+.gn-lab{font:700 13px var(--font-ui);fill:#1a1230;text-anchor:middle;pointer-events:none}
+.gn-sn{font:700 13px var(--font-ui);fill:var(--muted);text-anchor:end;pointer-events:none}
+.gn-fn{font:600 12px var(--font-ui);fill:var(--muted);text-anchor:middle}
+.gn-tips{margin:0;padding-left:20px;display:grid;gap:8px;max-width:68ch}
 </style>
 </head>
 <body>
@@ -997,6 +1009,7 @@ var state={
   vi:0,
   tuning:store.get('tuning','std'),
   a4:store.get('a4',440),
+  gmode:store.get('gmode','notas')==='acordes'?'acordes':'notas',
   pmode:store.get('pmode','acordes')==='escalas'?'escalas':'acordes',
   theme:store.get('theme','dark')==='light'?'light':'dark',
   tview:store.get('tview','head')==='spec'?'spec':'head',
@@ -1241,8 +1254,16 @@ function legendHTML(hasChord){
     +'<span>Toca una nota para escucharla</span></div>';
 }
 
+function guitarBar(){
+  return '<div class="card pa-bar pa-top"><div class="seg" role="group" aria-label="Sección de la guitarra"><button data-act="gmode" data-v="notas" aria-pressed="'+(state.gmode==='notas')+'">Notas</button><button data-act="gmode" data-v="acordes" aria-pressed="'+(state.gmode==='acordes')+'">Acordes y escalas</button></div></div>';
+}
 function renderGuitar(ctx){
   var v=document.getElementById('view-guitarra');
+  if(state.gmode==='notas'){
+    v.innerHTML='<div class="stack">'+guitarBar()+'<div id="gn-root"></div></div>';
+    var GV=window.REH&&REH.views.gnotas;if(GV)GV.render(document.getElementById('gn-root'));
+    return;
+  }
   var chord=getChord(ctx);
   var vs=chord?voicings(chord):[];
   var vi=vs.length?Math.min(state.vi,vs.length-1):0;
@@ -1258,7 +1279,7 @@ function renderGuitar(ctx){
   }else{
     diag='<div class="card diagram"><p class="empty">Elige un acorde para ver los trastes donde se toca.</p></div>';
   }
-  v.innerHTML='<div class="stack">'+pickerHTML(ctx,chord,'g')
+  v.innerHTML='<div class="stack">'+guitarBar()+pickerHTML(ctx,chord,'g')
     +'<div class="gt-grid">'+diag+'<div class="card">'+chordInfoHTML(chord,ctx)
     +(chord?'<button class="btn" data-act="play-chord">'+PLAY+'Escuchar acorde</button>':'')+'</div></div>'
     +'<div class="card"><h3>Mástil: '+esc(titleOf(ctx))+'</h3>'+legendHTML(!!chord)+(NARROW&&NARROW.matches?'<div class="vneck">'+neckVSVG(ctx,chord)+'</div>':'<div class="scroll-x">'+neckSVG(ctx,chord)+'</div>')+'</div></div>';
@@ -1601,7 +1622,7 @@ function render(){
 }
 var TABS=['afinador','tonalidad','guitarra','piano','canciones','estudio'];
 function syncKeybar(){
-  var t=state.tab,hide=(t==='afinador'||t==='canciones'||t==='estudio'||(t==='piano'&&state.pmode!=='escalas'));
+  var t=state.tab,hide=(t==='afinador'||t==='canciones'||t==='estudio'||(t==='piano'&&state.pmode!=='escalas')||(t==='guitarra'&&state.gmode==='notas'));
   document.getElementById('keybar').hidden=hide;
 }
 function setTab(t){
@@ -1650,6 +1671,8 @@ function onAct(el){
     case 'play-prog':
       var pr=progressions(C().root.l,C().root.a,C().sc,C().dia,false)[+val];
       if(pr){audioCtx();playProg(pr.chords)}break;
+    case 'gmode':
+      state.gmode=val;store.set('gmode',val);syncKeybar();render();break;
     case 'pmode':
       state.pmode=val;store.set('pmode',val);syncKeybar();render();break;
     case 'goto':
@@ -1744,6 +1767,7 @@ if(typeof module!=='undefined'&&module.exports){
 <script src="acordes.js"></script>
 <script src="canciones.js"></script>
 <script src="estudio.js"></script>
+<script src="guitarnotas.js"></script>
 <script>if(window.REH&&REH.refresh)REH.refresh();</script>
 </body>
 </html>
