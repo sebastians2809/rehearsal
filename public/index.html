@@ -1386,46 +1386,71 @@ function applyTheme(t){
 }
 
 function headFam(id){
-  if(/^bass/.test(id))return {f:'bass',xl:44,xr:136,nw:64};
-  if(/^(vln|vla|vc)$/.test(id))return {f:'bow',xl:66,xr:114,nw:40};
-  if(/^(uke|charango|mando|banjo|cuatro|cava)/.test(id))return {f:'small',xl:46,xr:134,nw:54};
-  return {f:'gtr',xl:42,xr:138,nw:62};
+  if(id==='gtr7')return {f:'metal',xl:54,xr:126,nw:64};
+  if(/^bass/.test(id))return {f:'bass',xl:52,xr:128,nw:68};
+  if(/^(vln|vla|vc)$/.test(id))return {f:'bow',xl:72,xr:108,nw:40};
+  if(id==='mando')return {f:'mando',xl:56,xr:124,nw:52};
+  if(id==='banjo')return {f:'banjo',xl:58,xr:122,nw:50};
+  if(/^(uke|charango|cuatro|cava)/.test(id))return {f:'uke',xl:52,xr:128,nw:54};
+  return {f:'gtr',xl:46,xr:134,nw:62};
 }
 function headArt(FM){
-  var f=FM.f,nw=FM.nw,x0=90-nw/2,x1=90+nw/2;
-  var C={gtr:['#6b3b1e','#a8683a','#7a4526','#e9d9b4'],bass:['#16121e','#3b3250','#1b1626','#b8bdc9'],small:['#c98f45','#ecc17c','#b97f38','#fff0cf'],bow:['#6a230d','#a8481f','#5a1d0a','#e0c48a']}[f];
-  var d='<defs><linearGradient id="hw" x1="0" x2="1"><stop offset="0" stop-color="'+C[0]+'"/><stop offset=".45" stop-color="'+C[1]+'"/><stop offset="1" stop-color="'+C[2]+'"/></linearGradient>'
-   +'<linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>'
-   +'<linearGradient id="hsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f8"/><stop offset=".5" stop-color="#9aa0ac"/><stop offset="1" stop-color="#5d626c"/></linearGradient>'
-   +'<linearGradient id="nk" x1="0" x2="1"><stop offset="0" stop-color="'+(f==='bow'?'#15110f':'#2a1710')+'"/><stop offset=".5" stop-color="'+(f==='bow'?'#2a211c':'#4a2c1d')+'"/><stop offset="1" stop-color="'+(f==='bow'?'#15110f':'#2a1710')+'"/></linearGradient></defs>';
-  /* mástil */
+  var f=FM.f,nw=FM.nw,x0=90-nw/2,x1=90+nw/2,bow=f==='bow';
+  var PAL={
+    gtr:{w:['#5a2f17','#8f5630','#6a3a1f'],g:'#2a1308',acc:'#efe2bd',bind:'#f3ead2',neck:'#3a2116',dots:'#efe6d0'},
+    metal:{w:['#0d0d12','#2b2c36','#101016'],g:'#000',acc:'#c9ccd6',bind:'#6b6e7c',neck:'#2b1c14',dots:'#dfe3ec'},
+    bass:{w:['#15111d','#3a3150','#1a1525'],g:'#000',acc:'#c8ccd8',bind:'#8d8aa3',neck:'#3d2418',dots:'#e8e4d6'},
+    uke:{w:['#a9692c','#e2a85e','#98581f'],g:'#5a3010',acc:'#fff2d0',bind:'#2b1a0d',neck:'#4a2a18',dots:'#f4ecd8'},
+    mando:{w:['#7a3a10','#d98a2c','#6a2c08'],g:'#3a1804',acc:'#fff0c4',bind:'#1e1008',neck:'#2c1a10',dots:'#f4ecd8'},
+    banjo:{w:['#6b3a1a','#b57434','#5a2e12'],g:'#2c1608',acc:'#f6efdc',bind:'#e9dcc0',neck:'#3a2116',dots:'#f6efdc'},
+    bow:{w:['#5e1d08','#b24f1f','#4c1606'],g:'#2a0c02',acc:'#e6cf9a',bind:'#1a0a04',neck:'#120e0c',dots:'#000'}
+  }[f];
+  var d='<defs><linearGradient id="hw" x1="0" x2="1"><stop offset="0" stop-color="'+PAL.w[0]+'"/><stop offset=".45" stop-color="'+PAL.w[1]+'"/><stop offset="1" stop-color="'+PAL.w[2]+'"/></linearGradient>'
+   +'<linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset=".3" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>'
+   +'<linearGradient id="hsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f6fa"/><stop offset=".45" stop-color="#9ea4b0"/><stop offset="1" stop-color="#555a64"/></linearGradient>'
+   +'<linearGradient id="nk" x1="0" x2="1"><stop offset="0" stop-color="'+PAL.neck+'"/><stop offset=".5" stop-color="#6a4028"/><stop offset="1" stop-color="'+PAL.neck+'"/></linearGradient>';
+  var body,extra='',scroll='';
+  if(f==='gtr')body='M60 204 L60 188 C60 160 40 152 36 118 L33 52 Q32 26 54 16 Q72 10 82 14 Q90 5 98 14 Q108 10 126 16 Q148 26 147 52 L144 118 C140 152 120 160 120 188 L120 204Z';
+  else if(f==='metal')body='M60 204 V190 C56 170 46 160 42 140 L36 62 L52 10 L132 6 L146 56 L140 140 C136 160 124 170 120 190 V204Z';
+  else if(f==='bass')body='M62 204 V188 C62 168 54 158 50 136 L46 40 Q45 12 76 7 L106 7 Q136 12 134 40 L130 136 C126 158 118 168 118 188 V204Z';
+  else if(f==='mando')body='M66 204 V176 C66 154 54 148 54 126 L54 72 C54 40 68 18 90 14 C112 18 126 40 126 72 L126 126 C126 148 114 154 114 176 V204Z';
+  else if(f==='banjo')body='M66 204 V176 C66 150 52 140 52 112 L50 64 Q50 26 76 15 L104 15 Q130 26 130 64 L128 112 C128 140 114 150 114 176 V204Z';
+  else if(f==='bow')body='M72 204 V60 L70 40 L110 40 L108 60 V204Z';
+  else body='M64 204 V180 C64 152 46 146 44 114 L42 58 Q42 24 70 14 Q90 8 110 14 Q138 24 138 58 L136 114 C134 146 116 152 116 180 V204Z';
+  d+='<clipPath id="hc"><path d="'+body+'"/></clipPath></defs>';
+  /* mástil: ancho, brillo y trastes reales */
   d+='<path class="hs-neck" d="M'+x0+' 200 H'+x1+' V300 H'+x0+' Z"/>';
-  if(f!=='bow'){
-    var fr=[236,266,292],ds='';fr.forEach(function(y){ds+='M'+x0+' '+y+'H'+x1});
-    d+='<path class="hs-fret" d="'+ds+'"/>';
-    d+='<circle cx="90" cy="251" r="3.2" fill="#e9e2d0" opacity=".55"/><circle cx="90" cy="279" r="3.2" fill="#e9e2d0" opacity=".55"/>';
-  }else d+='<path d="M'+(x0+8)+' 200V300M'+(x1-8)+' 200V300" stroke="#000" stroke-opacity=".25" stroke-width="1"/>';
-  var body,extra='';
-  if(f==='gtr'){
-    body='M60 204 L60 186 C60 158 38 150 34 114 L29 48 Q27 12 62 6 Q90 1 118 6 Q153 12 151 48 L146 114 C142 150 120 158 120 186 L120 204 Z';
-    extra='<path d="M90 160 Q82 150 90 138 Q98 150 90 160Z" fill="'+C[3]+'" opacity=".85"/>'
-      +'<path d="M72 112 q10 -24 18 -4 q8 20 18 -6" fill="none" stroke="'+C[3]+'" stroke-width="3" stroke-linecap="round" opacity=".9"/>'
-      +'<ellipse cx="90" cy="92" rx="6" ry="2.6" fill="'+C[3]+'" opacity=".6"/>';
-  }else if(f==='bass'){
-    body='M62 204 V188 C62 168 54 158 50 136 L46 40 Q45 12 76 7 L106 7 Q136 12 134 40 L130 136 C126 158 118 168 118 188 V204 Z';
-    extra='<path d="M70 96 L110 96 L104 116 L76 116 Z" fill="none" stroke="'+C[3]+'" stroke-width="2.4" stroke-linejoin="round"/><path d="M78 106 H102" stroke="'+C[3]+'" stroke-width="3" stroke-linecap="round"/>'
-      +'<rect x="76" y="150" width="28" height="9" rx="4" fill="#000" opacity=".35"/>';
-  }else if(f==='small'){
-    body='M64 204 V178 C64 150 44 144 42 112 L40 54 Q39 18 70 11 Q90 6 110 11 Q141 18 140 54 L138 112 C136 144 116 150 116 178 V204 Z';
-    extra='<path d="M82 86 Q90 70 98 86 Q90 96 82 86Z" fill="'+C[3]+'" opacity=".7"/><path d="M90 98 V126" stroke="#5a3a14" stroke-width="2" opacity=".4"/>';
-  }else{
-    body='M68 204 V70 Q68 56 78 52 Q70 38 78 24 Q90 10 104 22 Q114 34 106 48 Q112 54 112 70 V204 Z';
-    extra='<path d="M90 26 m0 -9 a9 9 0 1 1 -9 9 a5 5 0 1 1 5 -5" fill="none" stroke="#3a1206" stroke-width="2" opacity=".7"/><path d="M76 80 V200M104 80 V200" stroke="#000" stroke-opacity=".18" stroke-width="2"/>';
+  if(!bow){
+    var L=f==='bass'?400:320,ds='',dots='';
+    for(var k=1;k<=5;k++){var y=200+L*(1-Math.pow(2,-k/12));ds+='M'+x0+' '+y.toFixed(1)+'H'+x1}
+    d+='<path d="'+ds+'" fill="none" stroke="#2a2a30" stroke-width="3.4" opacity=".55"/><path class="hs-fret" d="'+ds+'"/>';
+    [3,5].forEach(function(k){var ya=200+L*(1-Math.pow(2,-(k-1)/12)),yb=200+L*(1-Math.pow(2,-k/12));dots+='<circle cx="90" cy="'+((ya+yb)/2).toFixed(1)+'" r="3.4" fill="'+PAL.dots+'" opacity=".7"/>'});
+    d+=dots;
+  }else d+='<path d="M'+(x0+3)+' 200V300M'+(x1-3)+' 200V300" stroke="#fff" stroke-opacity=".08" stroke-width="1.5"/>';
+  d+='<path d="M'+x0+' 200V300" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>';
+  /* cuerpo del clavijero */
+  d+='<path class="hs-body" d="'+body+'"/>';
+  var gr='';for(var g=0;g<11;g++){var gx=40+g*10+((g*7)%5);gr+='<path d="M'+gx+' 0 C'+(gx-6)+' 70 '+(gx+7)+' 140 '+(gx-2)+' 210" />'}
+  d+='<g clip-path="url(#hc)" fill="none" stroke="'+PAL.g+'" stroke-width="1.1" opacity="'+(f==='metal'||f==='bass'?.0:.22)+'">'+gr+'</g>';
+  if(f==='metal'||f==='bass')d+='<g clip-path="url(#hc)"><path d="M30 0 L60 210" stroke="#fff" stroke-opacity=".08" stroke-width="14"/></g>';
+  d+='<path d="'+body+'" fill="url(#hg)" pointer-events="none"/>';
+  d+='<path d="'+body+'" fill="none" stroke="'+PAL.bind+'" stroke-opacity="'+(f==='uke'||f==='mando'||f==='bow'?.85:.55)+'" stroke-width="2" transform="translate(90 105) scale(.955) translate(-90 -105)"/>';
+  /* adornos */
+  if(f==='gtr')extra='<path d="M78 120 q12 -26 24 0 q-12 14 -24 0Z" fill="'+PAL.acc+'" opacity=".9"/><path d="M90 128 V150" stroke="'+PAL.acc+'" stroke-width="3" stroke-linecap="round" opacity=".8"/><path d="M70 92 H110" stroke="'+PAL.acc+'" stroke-width="2.4" stroke-linecap="round" opacity=".7"/><text x="90" y="82" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="'+PAL.acc+'" opacity=".85" letter-spacing="1.5">Rehearsal</text>';
+  else if(f==='metal')extra='<path d="M64 44 L116 38 L110 60 L70 66Z" fill="none" stroke="'+PAL.acc+'" stroke-width="2" stroke-linejoin="round" opacity=".8"/><path d="M72 90 H108 M76 102 H104" stroke="'+PAL.acc+'" stroke-width="2.2" stroke-linecap="round" opacity=".6"/><rect x="78" y="150" width="24" height="8" rx="4" fill="#000" opacity=".45"/>';
+  else if(f==='bass')extra='<path d="M70 92 L110 92 L104 114 L76 114Z" fill="none" stroke="'+PAL.acc+'" stroke-width="2.4" stroke-linejoin="round"/><path d="M78 103 H102" stroke="'+PAL.acc+'" stroke-width="3" stroke-linecap="round"/><rect x="78" y="146" width="24" height="9" rx="4" fill="#000" opacity=".4"/>';
+  else if(f==='uke')extra='<circle cx="90" cy="86" r="6" fill="'+PAL.acc+'" opacity=".75"/><path d="M90 96 V128" stroke="'+PAL.acc+'" stroke-width="2.4" stroke-linecap="round" opacity=".5"/><ellipse cx="90" cy="160" rx="9" ry="3.4" fill="#000" opacity=".25"/>';
+  else if(f==='mando')extra='<path d="M58 50 C46 48 44 34 54 30 C62 28 66 36 60 40" fill="none" stroke="'+PAL.bind+'" stroke-width="3" stroke-linecap="round"/><path d="M90 150 C80 140 82 122 90 112 C98 122 100 140 90 150Z M90 112 C84 100 92 90 98 98" fill="none" stroke="'+PAL.acc+'" stroke-width="2.4" stroke-linecap="round" opacity=".85"/><path d="M84 150 H96" stroke="'+PAL.acc+'" stroke-width="3" stroke-linecap="round" opacity=".85"/>';
+  else if(f==='banjo')extra='<path d="M90 150 V124 M90 124 C80 120 78 106 86 100 C90 106 90 112 90 124 C90 112 90 106 94 100 C102 106 100 120 90 124Z" fill="'+PAL.acc+'" fill-opacity=".8" stroke="'+PAL.acc+'" stroke-width="1.5" stroke-linecap="round"/><circle cx="90" cy="86" r="4" fill="'+PAL.acc+'" opacity=".7"/>';
+  else if(bow){
+    scroll='<g><circle cx="90" cy="24" r="22" fill="url(#hw)" stroke="#2a0c02" stroke-width="2"/><circle cx="90" cy="24" r="22" fill="url(#hg)"/>'
+      +'<path d="M90 24 m0 -17 a17 17 0 1 1 -17 17 a12 12 0 1 1 12 -12 a7 7 0 1 1 -7 7 a3 3 0 1 1 3 -3" fill="none" stroke="#2a0c02" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>'
+      +'<circle cx="90" cy="24" r="3.2" fill="#2a0c02" opacity=".85"/></g>'
+      +'<path d="M78 70 V196M102 70 V196" stroke="#2a0c02" stroke-opacity=".25" stroke-width="1.4"/><path d="M86 62 Q90 54 94 62" fill="none" stroke="#2a0c02" stroke-width="1.6" opacity=".5"/>';
   }
-  d+='<path class="hs-body" d="'+body+'"/><path d="'+body+'" fill="url(#hg)" pointer-events="none"/>';
-  d+='<path d="'+body+'" fill="none" stroke="'+(f==='bass'?'#8d8aa0':C[3])+'" stroke-opacity=".5" stroke-width="1.4" transform="translate(90 105) scale(.965) translate(-90 -105)"/>';
-  d+=extra;
-  d+='<rect x="'+(x0-2)+'" y="198" width="'+(nw+4)+'" height="7" rx="2.4" fill="#f0e7d2" stroke="#b9ad93" stroke-width=".8"/>';
+  d+=scroll+extra;
+  /* cejuela con ranuras */
+  d+='<rect x="'+(x0-2)+'" y="197" width="'+(nw+4)+'" height="7" rx="2.4" fill="'+(f==='bass'||f==='metal'?'#e9e2cf':'#f2e9d3')+'" stroke="#a89c82" stroke-width=".8"/>';
   return d;
 }
 function renderHead(){
