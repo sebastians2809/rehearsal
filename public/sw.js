@@ -1,7 +1,7 @@
 /* Rehearsal · funciona sin internet y carga rápido en la tablet.
    Estrategia: primero la red (así siempre ves la última versión) y, si no hay internet, lo guardado. */
-var CACHE='rehearsal-v1';
-var FILES=['./','index.html','synth.js','acordes.js','canciones.js','estudio.js','guitarnotas.js','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','fonts/nunito-latin-wght-normal.woff2','fonts/fredoka-latin-wght-normal.woff2'];
+var CACHE='rehearsal-v2';
+var FILES=['./','index.html','synth.js','acordes.js','canciones.js','productor.js','productor.css','guitarnotas.js','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','fonts/nunito-latin-wght-normal.woff2','fonts/fredoka-latin-wght-normal.woff2'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).then(function(){return self.skipWaiting()}));
 });
