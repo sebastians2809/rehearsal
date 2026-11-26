@@ -1486,6 +1486,9 @@ Tuner.start=function(){
   var a;
   try{a=audioCtx()}catch(e){a=null}
   if(!a){setMsg('No pude iniciar el audio del navegador.',true);return}
+  window.__rehMic=true;
+  try{if(navigator.audioSession)navigator.audioSession.type='play-and-record'}catch(e){}
+  try{if(window.__rehSilent)window.__rehSilent.pause()}catch(e){}
   navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}).then(function(stream){
     self.stream=stream;
     self.src=a.createMediaStreamSource(stream);
@@ -1503,11 +1506,12 @@ Tuner.start=function(){
     if(n==='NotAllowedError'||n==='SecurityError')setMsg('El micrófono está bloqueado. Permite el acceso desde el candado de la barra de direcciones y vuelve a intentar. Si ves esto dentro de una vista previa, abre la app en una pestaña propia.',true);
     else if(n==='NotFoundError')setMsg('No encontré ningún micrófono conectado.',true);
     else setMsg('No pude abrir el micrófono'+(n?' ('+n+')':'')+'.',true);
+    window.__rehMic=false;
   });
 };
 Tuner.stop=function(){
   if(!this.on&&!this.stream)return;
-  this.on=false;cancelAnimationFrame(this.raf);
+  this.on=false;cancelAnimationFrame(this.raf);window.__rehMic=false;
   try{this.src&&this.src.disconnect()}catch(e){}
   if(this.stream)this.stream.getTracks().forEach(function(t){t.stop()});
   this.stream=null;this.src=null;this.an=null;this.sp=null;this.fb=null;this.freq=0;this.hist=[];this.level=0;

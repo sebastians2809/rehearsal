@@ -6,6 +6,9 @@ var noiseBuf=null;
 var unl=false;
 /* iOS: el interruptor de silencio apaga WebAudio salvo que la sesión sea "playback" */
 function unlock(){
+  if(window.__rehMic)return;
+  try{if(navigator.audioSession&&navigator.audioSession.type!=='playback')navigator.audioSession.type='playback'}catch(e){}
+  if(window.__rehSilent){if(window.__rehSilent.paused){var q=window.__rehSilent.play();if(q&&q.catch)q.catch(function(){})}return}
   if(unl)return;unl=true;
   try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
   try{
