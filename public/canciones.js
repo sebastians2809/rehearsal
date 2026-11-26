@@ -142,6 +142,21 @@ function parseMelody(txt){
 function noteLabel(n){return ES_SH[n.pc]}
 
 /* ---------- estado ---------- */
+
+var YSNF={id:'sy_ysnf',title:'Y si no fuera',artist:'Chico Trujillo',text:
+'[Intro]\nAm7  D7  G  Em  Am7  D7  G  G7\n\n[Verso]\nAm7        D7\n(pega aquí la letra)\nG      G7      Em7\n\nAm7        D7(9)\n\nG      G7      G9\n\n[Coro]\nC          D7\n(pega aquí la letra)\nG      G7      Em7\n\nAm7        D7(9)    G7   G9\n\nAm7        D7\n\nG      G7      Em7\n\nAm7   D7   G\n',melody:''};
+(function seedAll(){
+  try{
+    var ps=JSON.parse(localStorage.getItem('sde_profiles')||'[]');
+    ps.forEach(function(p){
+      var pre=p.id==='seb'?'sde_':'sde_'+p.id+'_',fk=pre+'seed_ysnf';
+      if(localStorage.getItem(fk))return;
+      var cur=JSON.parse(localStorage.getItem(pre+'songs')||'[]');
+      if(!cur.some(function(x){return x.id===YSNF.id}))cur.push(JSON.parse(JSON.stringify(YSNF)));
+      localStorage.setItem(pre+'songs',JSON.stringify(cur));localStorage.setItem(fk,'1');
+    });
+  }catch(e){}
+})();
 var songs=store.get('songs',[]);
 var V={inst:store.get('sg_inst',(R.profile&&R.profile.inst==='guitar')?'guitar':'piano'),screen:'list',id:null,q:'',tr:0,easy:false,melIdx:-1,practice:false,pIdx:0,bpm:90,playing:null,tab:'piano',edit:null};
 function save(){store.set('songs',songs)}
@@ -274,19 +289,24 @@ function miniHTML(d){
   }
   return '<button class="sg-mini" data-sg="chord" data-pc="'+d.pc+'" data-type="'+d.type+'" data-name="'+esc(d.name)+'" data-txt="'+esc(d.txt)+'" data-bass="'+(d.bass===null?'':d.bass)+'"><b>'+esc(d.txt)+'</b><span class="sg-mv">'+inner+'</span></button>';
 }
+function stripHTML(list){
+  var g=V.inst==='guitar';
+  return '<div class="sg-strip" data-inst="'+V.inst+'"><div class="sg-mode" role="group" aria-label="Instrumento"><button data-sg="inst" data-v="piano" aria-pressed="'+(!g)+'"><span aria-hidden="true">🎹</span>Piano</button><button data-sg="inst" data-v="guitar" aria-pressed="'+g+'"><span aria-hidden="true">🎸</span>Guitarra</button></div>'
+    +'<div class="sg-rail">'+list.map(miniHTML).join('')+'</div></div>';
+}
 function readerHTML(s){
   var c=cache(s),list=uniqueChords(c);
   var key=c.key?{pc:(c.key.pc+V.tr+120)%12,mode:c.key.mode}:null;
   var chips=list.map(function(d){return '<button class="chip sg-chip" data-sg="chord" data-pc="'+d.pc+'" data-type="'+d.type+'" data-name="'+esc(d.name)+'" data-txt="'+esc(d.txt)+'" data-bass="'+(d.bass===null?'':d.bass)+'">'+esc(d.txt)+'</button>'}).join('');
   var approx=c.chs.some(function(x){return x.approx});
-  return '<div class="stack sg"><div class="card"><div class="row" style="justify-content:space-between"><button class="btn" data-sg="back">← Canciones</button><div class="row"><button class="btn" data-sg="share">Copiar enlace</button><button class="btn" data-sg="edit">Editar</button></div></div>'
+  return '<div class="stack sg">'+stripHTML(list)+'<div class="card"><div class="row" style="justify-content:space-between"><button class="btn" data-sg="back">← Canciones</button><div class="row"><button class="btn" data-sg="share">Copiar enlace</button><button class="btn" data-sg="edit">Editar</button></div></div>'
     +'<h2 style="margin-top:14px">'+esc(s.title||'Sin título')+'</h2><p class="sub">'+esc(s.artist||'')+'</p>'
     +'<div class="facts"><span class="fact">Tonalidad: <b>'+esc(keyName(key))+'</b></span><span class="fact"><b>'+list.length+'</b> acordes distintos</span></div></div>'
     +'<div class="card">'+singHTML(c,key)+'<div class="row sg-ctl"><div class="stepper" aria-label="Transponer"><button data-sg="tr" data-v="-1" aria-label="Bajar medio tono">−</button><output>'+(V.tr>0?'+':'')+V.tr+'</output><button data-sg="tr" data-v="1" aria-label="Subir medio tono">+</button></div><span class="small">Cambiar de tono (semitonos)</span></div>'
     +'<div class="row" style="margin-top:10px"><div class="seg" role="group" aria-label="Dificultad"><button data-sg="easy" data-v="0" aria-pressed="'+(!V.easy)+'">Acordes originales</button><button data-sg="easy" data-v="1" aria-pressed="'+V.easy+'">Versión fácil</button></div>'
     +'<button class="btn" data-sg="prog">'+R.PLAY+'Escuchar acordes</button></div>'
     +(approx&&!V.easy?'<p class="small" style="margin:10px 0 0">Algunos acordes raros se muestran con el acorde básico más parecido en el piano y la guitarra.</p>':'')+'</div>'
-    +'<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Acordes de esta canción</h3><div class="seg" role="group" aria-label="Instrumento"><button data-sg="inst" data-v="piano" aria-pressed="'+(V.inst==='piano')+'">Piano</button><button data-sg="inst" data-v="guitar" aria-pressed="'+(V.inst==='guitar')+'">Guitarra</button></div></div><div class="chips" style="margin-top:12px">'+chips+'</div><div class="sg-minis">'+list.map(miniHTML).join('')+'</div><p class="small" style="margin:10px 0 0">Toca un acorde para escucharlo y verlo grande.</p></div>'
+    +'<div class="card sg-modecard"><p class="small" style="margin:0">Toca cualquier acorde (arriba o en la letra) para ver cómo se toca en <b>'+(V.inst==='piano'?'piano':'guitarra')+'</b>.</p></div>'
     +melodyHTML(s)
     +'<div class="card"><div class="sg-text">'+songTextHTML(c)+'</div></div></div>';
 }
