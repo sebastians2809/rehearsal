@@ -143,7 +143,7 @@ function noteLabel(n){return ES_SH[n.pc]}
 
 /* ---------- estado ---------- */
 var songs=store.get('songs',[]);
-var V={screen:'list',id:null,q:'',tr:0,easy:false,melIdx:-1,practice:false,pIdx:0,bpm:90,playing:null,tab:'piano',edit:null};
+var V={inst:store.get('sg_inst',(R.profile&&R.profile.inst==='guitar')?'guitar':'piano'),screen:'list',id:null,q:'',tr:0,easy:false,melIdx:-1,practice:false,pIdx:0,bpm:90,playing:null,tab:'piano',edit:null};
 function save(){store.set('songs',songs)}
 function uid(){return 's'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36)}
 function byId(id){return songs.filter(function(s){return s.id===id})[0]}
@@ -258,6 +258,22 @@ function melodyHTML(s){
     +'<div class="stepper" aria-label="Velocidad"><button data-sg="bpm" data-v="-10" aria-label="Más lento">−</button><output>'+V.bpm+' bpm</output><button data-sg="bpm" data-v="10" aria-label="Más rápido">+</button></div></div>'
     +(V.practice?'<p class="small">'+(V.pIdx>=mel.length?'¡Terminaste la melodía! 🎉':'Toca la tecla iluminada para avanzar por cada nota.')+'</p>':'')+'</div>';
 }
+function singHTML(c,key){
+  if(!c.key)return '';
+  var opts=['Do','Do♯','Re','Mi♭','Mi','Fa','Fa♯','Sol','La♭','La','Si♭','Si'].map(function(n,i){return '<option value="'+i+'"'+(key.pc===i?' selected':'')+'>'+n+(c.key.mode==='maj'?' mayor':' menor')+'</option>'}).join('');
+  return '<div class="sg-sing"><label class="field">Cantar en<select data-sg="sing" aria-label="Tonalidad para cantar">'+opts+'</select></label>'
+    +'<p class="small">Tono original: <b>'+esc(keyName(c.key))+'</b>'+(V.tr?' · tu tono: <b>'+esc(keyName(key))+'</b> ('+(V.tr>0?'+':'')+V.tr+')':'')+(V.tr?' <button class="chip" data-sg="trreset" style="min-height:30px;padding:2px 10px">Volver al original</button>':'')+'</p></div>';
+}
+function miniHTML(d){
+  var ch=theory(d),inner;
+  if(V.inst==='guitar'){
+    var vs=R.voicings(ch);inner=vs.length?R.diagramSVG(ch,vs[0].v):'<p class="small">—</p>';
+  }else{
+    var mids=K.voicing(ch,0),start=Math.min.apply(null,mids)<60||mids[mids.length-1]>83?48:60;
+    inner=K.keyboard({mids:mids,fing:K.fingers(mids.length,'R'),start:start,span:24});
+  }
+  return '<button class="sg-mini" data-sg="chord" data-pc="'+d.pc+'" data-type="'+d.type+'" data-name="'+esc(d.name)+'" data-txt="'+esc(d.txt)+'" data-bass="'+(d.bass===null?'':d.bass)+'"><b>'+esc(d.txt)+'</b><span class="sg-mv">'+inner+'</span></button>';
+}
 function readerHTML(s){
   var c=cache(s),list=uniqueChords(c);
   var key=c.key?{pc:(c.key.pc+V.tr+120)%12,mode:c.key.mode}:null;
@@ -266,17 +282,17 @@ function readerHTML(s){
   return '<div class="stack sg"><div class="card"><div class="row" style="justify-content:space-between"><button class="btn" data-sg="back">← Canciones</button><div class="row"><button class="btn" data-sg="share">Copiar enlace</button><button class="btn" data-sg="edit">Editar</button></div></div>'
     +'<h2 style="margin-top:14px">'+esc(s.title||'Sin título')+'</h2><p class="sub">'+esc(s.artist||'')+'</p>'
     +'<div class="facts"><span class="fact">Tonalidad: <b>'+esc(keyName(key))+'</b></span><span class="fact"><b>'+list.length+'</b> acordes distintos</span></div></div>'
-    +'<div class="card"><div class="row sg-ctl"><div class="stepper" aria-label="Transponer"><button data-sg="tr" data-v="-1" aria-label="Bajar medio tono">−</button><output>'+(V.tr>0?'+':'')+V.tr+'</output><button data-sg="tr" data-v="1" aria-label="Subir medio tono">+</button></div><span class="small">Cambiar de tono (semitonos)</span></div>'
+    +'<div class="card">'+singHTML(c,key)+'<div class="row sg-ctl"><div class="stepper" aria-label="Transponer"><button data-sg="tr" data-v="-1" aria-label="Bajar medio tono">−</button><output>'+(V.tr>0?'+':'')+V.tr+'</output><button data-sg="tr" data-v="1" aria-label="Subir medio tono">+</button></div><span class="small">Cambiar de tono (semitonos)</span></div>'
     +'<div class="row" style="margin-top:10px"><div class="seg" role="group" aria-label="Dificultad"><button data-sg="easy" data-v="0" aria-pressed="'+(!V.easy)+'">Acordes originales</button><button data-sg="easy" data-v="1" aria-pressed="'+V.easy+'">Versión fácil</button></div>'
     +'<button class="btn" data-sg="prog">'+R.PLAY+'Escuchar acordes</button></div>'
     +(approx&&!V.easy?'<p class="small" style="margin:10px 0 0">Algunos acordes raros se muestran con el acorde básico más parecido en el piano y la guitarra.</p>':'')+'</div>'
-    +'<div class="card"><h3>Acordes de esta canción</h3><div class="chips">'+chips+'</div><p class="small" style="margin:10px 0 0">Toca un acorde para ver cómo se hace en piano y en guitarra.</p></div>'
+    +'<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Acordes de esta canción</h3><div class="seg" role="group" aria-label="Instrumento"><button data-sg="inst" data-v="piano" aria-pressed="'+(V.inst==='piano')+'">Piano</button><button data-sg="inst" data-v="guitar" aria-pressed="'+(V.inst==='guitar')+'">Guitarra</button></div></div><div class="chips" style="margin-top:12px">'+chips+'</div><div class="sg-minis">'+list.map(miniHTML).join('')+'</div><p class="small" style="margin:10px 0 0">Toca un acorde para escucharlo y verlo grande.</p></div>'
     +melodyHTML(s)
     +'<div class="card"><div class="sg-text">'+songTextHTML(c)+'</div></div></div>';
 }
 
 /* ---------- hoja de acorde ---------- */
-var sheet=null,sheetState={tab:'piano',d:null};
+var sheet=null,sheetState={tab:V.inst,d:null};
 function ensureSheet(){
   if(sheet)return;
   sheet=document.createElement('div');sheet.className='sheet';sheet.hidden=true;sheet.id='sg-sheet';
@@ -358,6 +374,7 @@ function render(el){
     el.__sg=true;
     el.addEventListener('click',onClick);
     el.addEventListener('input',onInput);
+    el.addEventListener('change',onChangeSel);
   }
   if(V.screen==='edit')liveEdit();
 }
@@ -366,6 +383,13 @@ function liveEdit(){
   var tmp={text:V.edit.text},c=parseSong(tmp.text),chs=allChords(c),k=detectKey(chs);
   var seen={};chs.forEach(function(x){seen[x.pc+x.type]=1});
   box.textContent=chs.length?'Detecté '+chs.length+' acordes ('+Object.keys(seen).length+' distintos). Tonalidad: '+keyName(k)+'.':'Todavía no veo acordes. Pega el texto con los acordes sobre la letra.';
+}
+function onChangeSel(e){
+  var t=e.target;if(!t.getAttribute||t.getAttribute('data-sg')!=='sing')return;
+  var s=V.id?byId(V.id):null;if(!s)return;
+  var c=cache(s);if(!c.key)return;
+  var d=((+t.value)-c.key.pc+12)%12;
+  V.tr=d>6?d-12:d;persist(s);render(host);
 }
 function onInput(e){
   var f=e.target.getAttribute&&e.target.getAttribute('data-f');
@@ -394,17 +418,19 @@ function onClick(e){
   switch(a){
     case 'new':V.edit={isNew:true,title:'',artist:'',text:'',melody:''};V.screen='edit';render(host);window.scrollTo(0,0);break;
     case 'sample':var n={id:uid(),title:SAMPLE.title,artist:SAMPLE.artist,text:SAMPLE.text,melody:SAMPLE.melody};songs.unshift(n);save();V.id=n.id;V.screen='read';V.tr=0;V.easy=false;render(host);break;
-    case 'open':V.id=b.getAttribute('data-id');V.screen='read';V.tr=0;V.easy=false;V.melIdx=-1;V.practice=false;clearTimers();render(host);window.scrollTo(0,0);break;
+    case 'open':V.id=b.getAttribute('data-id');V.screen='read';V.tr=(byId(V.id)||{}).tr||0;V.easy=!!(byId(V.id)||{}).easy;V.melIdx=-1;V.practice=false;clearTimers();render(host);window.scrollTo(0,0);break;
     case 'back':clearTimers();V.practice=false;V.screen='list';render(host);break;
     case 'edit':V.edit={isNew:false,id:s.id,title:s.title,artist:s.artist||'',text:s.text,melody:s.melody||''};V.screen='edit';render(host);break;
     case 'save':
       var ed=V.edit;if(!ed.text.trim()&&!ed.title.trim()){toast('Escribe al menos un título o pega la letra');break}
       if(ed.isNew){var ns={id:uid(),title:ed.title.trim()||'Sin título',artist:ed.artist.trim(),text:ed.text,melody:ed.melody};songs.unshift(ns);V.id=ns.id}
       else{var o=byId(ed.id);o.title=ed.title.trim()||'Sin título';o.artist=ed.artist.trim();o.text=ed.text;o.melody=ed.melody;delete o._c}
-      save();V.screen='read';V.tr=0;render(host);window.scrollTo(0,0);toast('Guardada');break;
+      save();V.screen='read';V.tr=(byId(V.id)||{}).tr||0;V.easy=!!(byId(V.id)||{}).easy;render(host);window.scrollTo(0,0);toast('Guardada');break;
     case 'del':if(window.confirm('¿Borrar esta canción?')){songs=songs.filter(function(x){return x.id!==V.edit.id});save();V.screen='list';render(host)}break;
-    case 'tr':V.tr=Math.max(-11,Math.min(11,V.tr+(+v)));render(host);break;
-    case 'easy':V.easy=v==='1';render(host);break;
+    case 'tr':V.tr=Math.max(-11,Math.min(11,V.tr+(+v)));persist(s);render(host);break;
+    case 'trreset':V.tr=0;persist(s);render(host);break;
+    case 'easy':V.easy=v==='1';persist(s);render(host);break;
+    case 'inst':V.inst=v;sheetState.tab=v;store.set('sg_inst',v);render(host);break;
     case 'chord':
       openSheet({pc:+b.getAttribute('data-pc'),type:b.getAttribute('data-type'),name:b.getAttribute('data-name'),txt:b.getAttribute('data-txt'),bass:b.getAttribute('data-bass')===''?null:+b.getAttribute('data-bass')});break;
     case 'prog':R.audioReady();playProg(s);break;
@@ -415,6 +441,7 @@ function onClick(e){
     case 'bpm':V.bpm=Math.max(40,Math.min(200,V.bpm+(+v)));redraw(true);break;
   }
 }
+function persist(s){if(s){s.tr=V.tr;s.easy=V.easy;save()}}
 function skipRests(s){var mel=parseMelody(s.melody);while(V.pIdx<mel.length&&mel[V.pIdx].rest)V.pIdx++}
 function keyPress(m){
   var s=V.id?byId(V.id):null;
@@ -441,5 +468,5 @@ function importFromHash(){
 }
 R.views.canciones={render:function(el){render(el)},leave:function(){clearTimers();closeSheet()}};
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet()});
-if(importFromHash()){R.setTab('canciones');toast('Canción guardada en tu biblioteca')}
+if(R.hasActive&&importFromHash()){R.setTab('canciones');toast('Canción guardada en el cancionero de '+(R.profile?R.profile.name:'tu perfil'))}
 })();

@@ -294,10 +294,10 @@ h3{font-weight:600;font-size:19px}
 .tn[data-view="head"] .tn-specwrap{display:none}
 .tn[data-view="spec"] .tn-headwrap{display:none}
 .tn-headwrap{display:grid;gap:26px;justify-items:center;width:100%}
-.tn-hd{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:stretch;height:clamp(220px,34dvh,350px);width:100%;max-width:440px}
+.tn-hd{display:grid;grid-template-rows:minmax(0,1fr);grid-template-columns:auto minmax(0,1fr) auto;align-items:stretch;--hh:clamp(250px,40dvh,380px);height:var(--hh);width:100%;max-width:440px}
 .tn[data-chrom] .tn-hd{display:none}
 .tn-col{display:grid;grid-template-rows:repeat(var(--rows,3),1fr);align-items:center;justify-items:center;width:74px;height:63.33%;align-self:start;margin-top:1.33%}
-.tn-hd svg{width:100%;height:100%;display:block;overflow:visible}
+.tn-hd svg{width:100%;height:100%;min-height:0;display:block;overflow:visible}
 .hs-body{fill:url(#hw);stroke:#3b2415;stroke-width:2;vector-effect:non-scaling-stroke;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
 .hs-neck{fill:url(#nk)}
 .hs-fret{fill:none;stroke:#b9b0a2;stroke-width:2;vector-effect:non-scaling-stroke;opacity:.7}
@@ -306,7 +306,7 @@ h3{font-weight:600;font-size:19px}
 .hs-str{fill:none;stroke:#e9e4f2;opacity:.75;vector-effect:non-scaling-stroke;stroke-linecap:round;transition:stroke .15s,opacity .15s}
 .hs-str.on{stroke:var(--c);opacity:1;filter:drop-shadow(0 0 5px var(--c))}
 .hs-nut{fill:#efe5d0}
-.peg{position:relative;width:62px;height:62px;border-radius:50%;border:2px solid var(--line);background:var(--surface-2);color:var(--ink);display:grid;place-items:center;padding:0;font:600 22px/1 var(--font-display);transition:background .15s,border-color .15s,transform .1s}
+.peg{position:relative;width:min(62px,calc(var(--hh,300px)*.63/var(--rows,3) - 6px));height:min(62px,calc(var(--hh,300px)*.63/var(--rows,3) - 6px));border-radius:50%;border:2px solid var(--line);background:var(--surface-2);color:var(--ink);display:grid;place-items:center;padding:0;font:600 22px/1 var(--font-display);transition:background .15s,border-color .15s,transform .1s}
 .peg small{position:absolute;right:9px;bottom:10px;font:700 11px/1 var(--font-ui);color:var(--muted)}
 .peg:active{transform:scale(.94)}
 .peg.near{border-color:var(--c)}
@@ -406,7 +406,7 @@ body.no-scroll{overflow:hidden}
   .tn-bar .seg{flex:1}
 }
 @media (max-height:700px) and (max-width:699px){
-  .tn-hd{height:clamp(170px,28dvh,260px)}
+  .tn-hd{--hh:clamp(190px,30dvh,260px)}
   .tn-mic{width:70px;height:70px}
 }
 @media (prefers-reduced-motion: reduce){
@@ -536,6 +536,37 @@ body.no-scroll{overflow:hidden}
 .gn-sn{font:700 13px var(--font-ui);fill:var(--muted);text-anchor:end;pointer-events:none}
 .gn-fn{font:600 12px var(--font-ui);fill:var(--muted);text-anchor:middle}
 .gn-tips{margin:0;padding-left:20px;display:grid;gap:8px;max-width:68ch}
+
+/* ===== Perfiles ===== */
+.who-em{font-size:21px;line-height:1}
+.top .who-btn{right:68px}
+.who{position:fixed;inset:0;z-index:150;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:20px;overflow:auto}
+.who[hidden]{display:none}
+.who-p{width:100%;max-width:560px;background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:var(--shadow)}
+.who-list{display:grid;gap:10px;margin-top:16px}
+.who-card{display:flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:22px;background:var(--surface-2);padding:6px}
+.who-card.cur{border-color:var(--accent)}
+.who-pick{flex:1;display:flex;align-items:center;gap:14px;text-align:left;background:none;border:0;padding:8px 10px;min-height:68px;border-radius:16px}
+.who-pick b{display:block;font:600 22px/1.1 var(--font-display)}
+.who-pick small{color:var(--muted);font-weight:700}
+.who-big{font-size:38px;line-height:1;width:52px;text-align:center}
+.who-ed{width:46px;height:46px;border-radius:50%;border:0;background:transparent;color:var(--muted);font-size:20px}
+.who-new{justify-content:center;gap:10px;min-height:68px;border-style:dashed;color:var(--muted);font:600 18px var(--font-display)}
+.who-emojis{display:flex;flex-wrap:wrap;gap:8px}
+.who-e{width:52px;height:52px;border-radius:16px;border:2px solid var(--line);background:var(--surface-2);font-size:26px;padding:0}
+.who-e[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+@media (min-width:700px){.top .who-btn{right:80px}.tabs{margin-right:108px}}
+
+.sg-sing{display:grid;gap:6px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.sg-sing select{max-width:280px}
+.sg-minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.sg-mini{display:grid;gap:6px;justify-items:center;text-align:center;padding:10px 8px;border-radius:16px;border:1px solid var(--line);background:var(--surface-2)}
+.sg-mini b{font:600 18px var(--font-display)}
+.sg-mv{display:block;width:100%}
+.sg-mv svg{width:100%;height:auto;max-height:130px;display:block}
+.sg-mv .pa-kb{min-width:0}
+.sg-mv .pk-t,.sg-mv .pk-oc{display:none}
+.tn-pick small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56vw}
 </style>
 </head>
 <body>
@@ -575,6 +606,7 @@ body.no-scroll{overflow:hidden}
       <button class="tab" role="tab" data-tab="canciones" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg><span>Canciones</span></button>
       <button class="tab" role="tab" data-tab="estudio" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg><span>Estudio</span></button>
     </nav>
+    <button class="icon-btn who-btn" data-act="who" aria-label="Cambiar de perfil"><span class="who-em">🎸</span></button>
     <button class="icon-btn" data-act="theme" aria-label="Cambiar entre tema oscuro y claro"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
   </header>
 
@@ -602,7 +634,7 @@ body.no-scroll{overflow:hidden}
             <button data-act="tview" data-v="head" aria-pressed="true">Cabezal</button>
             <button data-act="tview" data-v="spec" aria-pressed="false">Espectro</button>
           </div>
-          <button class="icon-btn" data-act="theme" aria-label="Cambiar entre tema oscuro y claro"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+          <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="icon-btn who-btn" data-act="who" aria-label="Cambiar de perfil"><span class="who-em">🎸</span></button><button class="icon-btn" data-act="theme" aria-label="Cambiar entre tema oscuro y claro"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button></div>
         </div>
         <div class="tn-inst">
           <button class="tn-pick" data-act="sheet" id="tn-pick" aria-haspopup="dialog"><span><b id="tn-inst-name">Guitarra 6 cuerdas</b><small id="tn-tun-name">Estándar</small></span></button>
@@ -647,6 +679,8 @@ body.no-scroll{overflow:hidden}
   </main>
 </div>
 
+<div class="who" id="who" hidden><div class="who-p" role="dialog" aria-modal="true" aria-label="Perfiles"><div id="who-body"></div></div></div>
+
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-bd" data-act="sheet-close"></div>
   <div class="sheet-p" role="dialog" aria-modal="true" aria-label="Instrumento y afinación">
@@ -661,9 +695,21 @@ body.no-scroll{overflow:hidden}
 'use strict';
 
 /* ============ utilidades ============ */
+/* perfiles: cada persona guarda sus cosas aparte. 'seb' usa las claves de siempre. */
+var PROFILES=null,ACTIVE=null;
+try{PROFILES=JSON.parse(localStorage.getItem('sde_profiles'));ACTIVE=localStorage.getItem('sde_active')}catch(e){}
+if(!PROFILES||!PROFILES.length){
+  PROFILES=[{id:'seb',name:'Sebastián',emoji:'🎸',inst:'guitar',home:'afinador'},{id:'bruno',name:'Bruno',emoji:'🎹',inst:'piano',home:'piano'}];
+  try{localStorage.setItem('sde_profiles',JSON.stringify(PROFILES))}catch(e){}
+}
+var HAS_ACTIVE=!!ACTIVE&&PROFILES.some(function(p){return p.id===ACTIVE});
+if(!HAS_ACTIVE)ACTIVE=PROFILES[0].id;
+var PROFILE=PROFILES.filter(function(p){return p.id===ACTIVE})[0];
+var GLOBAL_KEYS={theme:1,a4:1,tuning:1,tview:1};
+function skey(k){return GLOBAL_KEYS[k]?'sde_'+k:(ACTIVE==='seb'?'sde_':'sde_'+ACTIVE+'_')+k}
 var store={
-  get:function(k,d){try{var v=localStorage.getItem('sde_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
-  set:function(k,v){try{localStorage.setItem('sde_'+k,JSON.stringify(v))}catch(e){}}
+  get:function(k,d){try{var v=localStorage.getItem(skey(k));return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem(skey(k),JSON.stringify(v))}catch(e){}}
 };
 function mod(n,m){return ((n%m)+m)%m}
 
@@ -980,13 +1026,25 @@ var INSTRUMENTS=[
     {id:'std',name:'Estándar',s:[40,45,50,55,59,64]},
     {id:'dropd',name:'Drop D',s:[38,45,50,55,59,64]},
     {id:'eb',name:'Medio tono abajo',s:[39,44,49,54,58,63],flats:true},
+    {id:'dstd',name:'Tono entero abajo (Re estándar)',s:[38,43,48,53,57,62]},
+    {id:'dropc',name:'Drop C',s:[36,43,48,53,57,62]},
     {id:'dadgad',name:'DADGAD',s:[38,45,50,55,57,62]},
-    {id:'openg',name:'Open G',s:[38,43,50,55,59,62]}]},
-  {id:'bass',name:'Bajo 4 cuerdas',tunings:[{id:'bass',name:'Estándar',s:[28,33,38,43]}]},
+    {id:'openg',name:'Open G',s:[38,43,50,55,59,62]},
+    {id:'opend',name:'Open D',s:[38,45,50,54,57,62]}]},
+  {id:'gtr7',name:'Guitarra 7 cuerdas',tunings:[{id:'gtr7',name:'Estándar',s:[35,40,45,50,55,59,64]}]},
+  {id:'bass',name:'Bajo 4 cuerdas',tunings:[{id:'bass',name:'Estándar',s:[28,33,38,43]},{id:'bassd',name:'Drop D',s:[26,33,38,43]}]},
   {id:'bass5',name:'Bajo 5 cuerdas',tunings:[{id:'bass5',name:'Estándar',s:[23,28,33,38,43]}]},
-  {id:'uke',name:'Ukelele',tunings:[{id:'uke',name:'Estándar',s:[67,60,64,69]}]},
+  {id:'bass6',name:'Bajo 6 cuerdas',tunings:[{id:'bass6',name:'Estándar',s:[23,28,33,38,43,48]}]},
+  {id:'uke',name:'Ukelele',tunings:[{id:'uke',name:'Soprano / tenor (Sol Do Mi La)',s:[67,60,64,69]},{id:'ukelow',name:'Sol grave',s:[55,60,64,69]},{id:'ukebar',name:'Barítono (Re Sol Si Mi)',s:[50,55,59,64]}]},
+  {id:'charango',name:'Charango',tunings:[{id:'charango',name:'Estándar (Sol Do Mi La Mi)',s:[67,72,76,69,76]}]},
+  {id:'mando',name:'Mandolina',tunings:[{id:'mando',name:'Estándar (Sol Re La Mi)',s:[55,62,69,76]}]},
+  {id:'banjo',name:'Banjo 5 cuerdas',tunings:[{id:'banjo',name:'Sol abierto',s:[67,50,55,59,62]}]},
+  {id:'cuatro',name:'Cuatro venezolano',tunings:[{id:'cuatro',name:'Estándar',s:[57,62,66,59]}]},
+  {id:'cava',name:'Cavaquinho',tunings:[{id:'cava',name:'Estándar (Re Sol Si Re)',s:[62,67,71,74]}]},
   {id:'vln',name:'Violín',tunings:[{id:'vln',name:'Estándar',s:[55,62,69,76]}]},
-  {id:'chrom',name:'Cromático',tunings:[{id:'chrom',name:'Todas las notas',s:[]}]}
+  {id:'vla',name:'Viola',tunings:[{id:'vla',name:'Estándar',s:[48,55,62,69]}]},
+  {id:'vc',name:'Violonchelo',tunings:[{id:'vc',name:'Estándar',s:[36,43,50,57]}]},
+  {id:'chrom',name:'Cromático (voz y cualquier instrumento)',tunings:[{id:'chrom',name:'Todas las notas',s:[]}]}
 ];
 var TUNINGS=[];
 INSTRUMENTS.forEach(function(ins){ins.tunings.forEach(function(t){t.inst=ins;TUNINGS.push(t)})});
@@ -1673,6 +1731,28 @@ function onAct(el){
       if(pr){audioCtx();playProg(pr.chords)}break;
     case 'gmode':
       state.gmode=val;store.set('gmode',val);syncKeybar();render();break;
+    case 'who':openWho();break;
+    case 'who-close':closeWho();break;
+    case 'ppick':pickProfile(val);break;
+    case 'pnew':WF={id:null,name:'',emoji:'⭐',inst:'piano'};openWho();break;
+    case 'pedit':var pe=PROFILES.filter(function(p){return p.id===val})[0];WF={id:pe.id,name:pe.name,emoji:pe.emoji,inst:pe.inst};openWho();break;
+    case 'pemoji':WF.name=($('who-name')||{}).value||WF.name;WF.emoji=val;openWho();break;
+    case 'pinst':WF.name=($('who-name')||{}).value||WF.name;WF.inst=val;openWho();break;
+    case 'pcancel':WF=null;openWho();break;
+    case 'psave':
+      WF.name=(($('who-name')||{}).value||'').trim();
+      if(!WF.name){$('who-name').focus();break}
+      if(WF.id){var pp=PROFILES.filter(function(p){return p.id===WF.id})[0];pp.name=WF.name;pp.emoji=WF.emoji;pp.inst=WF.inst;saveProfiles();WF=null;PROFILE=PROFILES.filter(function(p){return p.id===ACTIVE})[0];paintAvatar();openWho()}
+      else{var np={id:'p'+Date.now().toString(36),name:WF.name,emoji:WF.emoji,inst:WF.inst,home:WF.inst==='piano'?'piano':'guitarra'};PROFILES.push(np);saveProfiles();WF=null;pickProfile(np.id)}
+      break;
+    case 'pdel':
+      if(window.confirm('¿Borrar el perfil '+WF.name+' con todo su cancionero? No se puede deshacer.')){
+        var pre='sde_'+WF.id+'_';
+        try{Object.keys(localStorage).forEach(function(k){if(k.indexOf(pre)===0)localStorage.removeItem(k)})}catch(e){}
+        PROFILES=PROFILES.filter(function(p){return p.id!==WF.id});saveProfiles();
+        var was=WF.id===ACTIVE;WF=null;
+        if(was)pickProfile(PROFILES[0].id);else openWho();
+      }break;
     case 'pmode':
       state.pmode=val;store.set('pmode',val);syncKeybar();render();break;
     case 'goto':
@@ -1709,6 +1789,31 @@ function onAct(el){
   }
 }
 
+var WF=null;
+function saveProfiles(){try{localStorage.setItem('sde_profiles',JSON.stringify(PROFILES))}catch(e){}}
+var EMOJIS=['🎸','🎹','🥁','🎤','🎧','🎷','🦄','🚀','🐯','⭐'];
+var INST_LABEL={guitar:'Guitarra',piano:'Piano'};
+function whoHTML(){
+  if(WF){
+    return '<h2>'+(WF.id?'Editar perfil':'Nuevo perfil')+'</h2>'
+      +'<label class="field">Nombre<input class="sg-in" id="who-name" value="'+esc(WF.name)+'" placeholder="¿Cómo te llamas?" maxlength="24"></label>'
+      +'<div class="field" style="margin-top:14px">Tu dibujo<div class="who-emojis">'+EMOJIS.map(function(e){return '<button class="who-e" data-act="pemoji" data-v="'+e+'" aria-pressed="'+(WF.emoji===e)+'">'+e+'</button>'}).join('')+'</div></div>'
+      +'<div class="field" style="margin-top:14px">Instrumento principal<div class="seg" role="group"><button data-act="pinst" data-v="piano" aria-pressed="'+(WF.inst==='piano')+'">Piano</button><button data-act="pinst" data-v="guitar" aria-pressed="'+(WF.inst==='guitar')+'">Guitarra</button></div></div>'
+      +'<div class="row" style="margin-top:18px"><button class="btn primary" data-act="psave">Guardar</button><button class="btn" data-act="pcancel">Cancelar</button>'
+      +(WF.id&&WF.id!=='seb'?'<button class="btn" data-act="pdel" style="margin-left:auto">Borrar perfil</button>':'')+'</div>';
+  }
+  return '<h2>'+(HAS_ACTIVE?'Perfiles':'¿Quién va a tocar?')+'</h2><p class="sub">Cada perfil tiene su propio cancionero, sus acordes aprendidos y sus loops.</p>'
+    +'<div class="who-list">'+PROFILES.map(function(p){
+      return '<div class="who-card'+(p.id===ACTIVE&&HAS_ACTIVE?' cur':'')+'"><button class="who-pick" data-act="ppick" data-v="'+p.id+'"><span class="who-big">'+p.emoji+'</span><span><b>'+esc(p.name)+'</b><small>'+(INST_LABEL[p.inst]||'')+'</small></span></button><button class="who-ed" data-act="pedit" data-v="'+p.id+'" aria-label="Editar '+esc(p.name)+'">✎</button></div>';
+    }).join('')+'<button class="who-card who-new" data-act="pnew"><span class="who-big">＋</span><b>Perfil nuevo</b></button></div>'
+    +(HAS_ACTIVE?'<div class="row" style="margin-top:16px"><button class="btn" data-act="who-close">Cerrar</button></div>':'');
+}
+function openWho(){$('who-body').innerHTML=whoHTML();$('who').hidden=false;document.body.classList.add('no-scroll')}
+function closeWho(){if(!HAS_ACTIVE)return;$('who').hidden=true;WF=null;document.body.classList.remove('no-scroll')}
+function pickProfile(id){try{localStorage.setItem('sde_active',id);if((location.hash||'').indexOf('#song=')!==0)history.replaceState(null,'',location.pathname+location.search)}catch(e){}location.reload()}
+function paintAvatar(){
+  $$('.who-btn').forEach(function(b){b.querySelector('.who-em').textContent=PROFILE.emoji;b.setAttribute('aria-label','Perfil: '+PROFILE.name+'. Cambiar')});
+}
 function init(){
   /* tuner */
   applyTheme(state.theme);
@@ -1717,7 +1822,7 @@ function init(){
   renderLabels();
   drawTuner();
   window.addEventListener('resize',function(){if(state.tab==='afinador')drawTuner()});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('sheet').hidden)closeSheet()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('sheet').hidden)closeSheet();else if(!$('who').hidden)closeWho()}});
 
   /* clicks */
   document.addEventListener('click',function(e){
@@ -1748,15 +1853,17 @@ function init(){
   });
   document.addEventListener('visibilitychange',function(){if(document.hidden&&Tuner.on)Tuner.stop()});
 
+  paintAvatar();
+  if(!HAS_ACTIVE)openWho();
   var start=(location.hash||'').replace('#','');
-  setTab(TABS.indexOf(start)>=0?start:'afinador');
+  setTab(TABS.indexOf(start)>=0?start:(TABS.indexOf(PROFILE.home)>=0?PROFILE.home:'afinador'));
 }
 
 window.REH={views:{},store:store,state:state,esc:esc,mod:mod,spell:spell,buildChord:buildChord,CT:CT,ROOTS:ROOTS,ES:ES,LET:LET,LPC:LPC,
   scaleNotes:scaleNotes,SCALES:SCALES,scaleById:scaleById,rootByKey:rootByKey,voicings:voicings,diagramSVG:diagramSVG,chordMidis:chordMidis,
   midiFreq:midiFreq,midiName:midiName,PLAY:PLAY,playFreq:playFreq,playChord:playChord,
   audio:function(){return actx},master:function(){return master},audioReady:function(){return audioCtx()},
-  refresh:function(){render()},setTab:setTab,acc:acc};
+  refresh:function(){render()},setTab:setTab,acc:acc,profile:PROFILE,hasActive:HAS_ACTIVE};
 if(typeof document!=='undefined'&&document.getElementById&&document.getElementById('tuner')){init()}
 if(typeof module!=='undefined'&&module.exports){
   module.exports={spell:spell,scaleNotes:scaleNotes,diatonic:diatonic,buildChord:buildChord,voicings:voicings,detect:detect,progressions:progressions,signature:signature,scaleById:scaleById,rootByKey:rootByKey,CT:CT,SCALES:SCALES,ROOTS:ROOTS};
@@ -1769,5 +1876,6 @@ if(typeof module!=='undefined'&&module.exports){
 <script src="estudio.js"></script>
 <script src="guitarnotas.js"></script>
 <script>if(window.REH&&REH.refresh)REH.refresh();</script>
+<script>if('serviceWorker' in navigator&&/^https?:/.test(location.protocol)){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
 </body>
 </html>
