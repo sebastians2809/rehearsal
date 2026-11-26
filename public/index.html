@@ -483,6 +483,47 @@ body.no-scroll{overflow:hidden}
 .sg-toast.out{opacity:0}
 .sheet-p .diagram>svg{max-width:260px}
 .sheet-p .pa-wrap svg{min-width:500px}
+
+/* ===== Estudio ===== */
+.st-trans{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.st-play{width:76px;height:76px;border-radius:50%;border:0;padding:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:var(--btn-shadow),0 0 0 8px color-mix(in srgb,var(--accent) 18%,transparent)}
+.st-play svg{width:34px;height:34px}
+.st-play .i-s{display:none}
+.st-play[data-on="1"]{background:var(--root)}
+.st-play[data-on="1"] .i-s{display:block}
+.st-play[data-on="1"] .i-p{display:none}
+.st-rec[aria-pressed="true"]{background:var(--root);color:#1a1230;border-color:var(--root)}
+.st-key{margin-top:14px;align-items:flex-end}
+.st-key .seg{display:inline-flex;width:auto}
+.st-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.st-h h3{margin:0}
+.st-e{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--c) 26%,var(--surface-2));font-size:20px}
+.st-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.st-r select{min-height:40px;font-size:14px;padding:6px 30px 6px 10px}
+.st-mix{display:flex;align-items:center;gap:6px}
+.st-m{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);padding:0;font-size:16px}
+.st-mix input[type=range]{width:92px;accent-color:var(--accent)}
+.st-scroll{margin:0 -4px;padding:0 4px 6px}
+.st-grid{min-width:600px}
+.st-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+.st-lb{flex:none;width:58px;font:600 13px var(--font-ui);color:var(--muted)}
+.st-cells{flex:1;display:grid;grid-template-columns:repeat(var(--n,16),minmax(0,1fr));gap:4px}
+.st-c{height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);padding:0;transition:background .06s}
+.st-c.g{background:color-mix(in srgb,var(--surface-2) 78%,var(--ink) 9%)}
+.st-c.on{background:var(--c);border-color:var(--c)}
+.st-c.ph{box-shadow:inset 0 0 0 2px var(--ink)}
+.st-c.on.ph{filter:brightness(1.25)}
+.st-chords{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.st-slot.ph select{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.st-pads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.st-pad{min-height:72px;border-radius:18px;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 22%,var(--surface-2));font:600 17px var(--font-display);color:var(--ink);transition:transform .08s,background .08s}
+.st-pad.hit,.st-pad:active{transform:scale(.95);background:var(--c);color:#1a1230}
+.st-save{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.st-save b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:699px){
+  .st-chords{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .st-r{margin-left:0;width:100%;justify-content:space-between}
+}
 </style>
 </head>
 <body>
@@ -1702,6 +1743,7 @@ if(typeof module!=='undefined'&&module.exports){
 <script src="synth.js"></script>
 <script src="acordes.js"></script>
 <script src="canciones.js"></script>
+<script src="estudio.js"></script>
 <script>if(window.REH&&REH.refresh)REH.refresh();</script>
 </body>
 </html>
