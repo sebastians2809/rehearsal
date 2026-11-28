@@ -3,8 +3,9 @@
 'use strict';
 var R=window.REH,store=R.store,esc=R.esc;
 var NAMES=['Do','Do♯','Re','Mi♭','Mi','Fa','Fa♯','Sol','La♭','La','Si♭','Si'];
-var SEMI={maj:[0,2,4,5,7,9,11],min:[0,2,3,5,7,8,10]};
-var ROMAN={maj:['I','ii','iii','IV','V','vi','vii°'],min:['i','ii°','III','iv','v','VI','VII']};
+var SEMI={maj:[0,2,4,5,7,9,11],min:[0,2,3,5,7,8,10],dor:[0,2,3,5,7,9,10],mix:[0,2,4,5,7,9,10],phr:[0,1,3,5,7,8,10],lyd:[0,2,4,6,7,9,11]};
+var MODES=[['maj','Mayor'],['min','Menor'],['dor','Dórico'],['mix','Mixolidio'],['phr','Frigio'],['lyd','Lidio']];
+var ROMAN={maj:['I','ii','iii','IV','V','vi','vii°'],min:['i','ii°','III','iv','v','VI','VII'],dor:['i','ii','III','IV','v','vi°','VII'],mix:['I','ii','iii°','IV','v','vi','VII'],phr:['i','II','III','iv','v°','VI','vii'],lyd:['I','II','iii','♯iv°','V','vi','vii']};
 var SCENES=['Intro','Estrofa','Coro','Final'];
 var NS=4,ARR=16;
 var ROWS={bass:8,chords:12,mel:12};
@@ -13,9 +14,9 @@ var VOL={bass:.42,chords:.2,mel:.3};
 var DR=R.inst.drums;
 var TR=[
   {id:'drums',name:'Batería',emoji:'🥁',color:'#ff8a6a',kind:'drum',opts:R.inst.kits},
-  {id:'bass',name:'Bajo',emoji:'🎸',color:'#58dcaa',kind:'note',opts:[['bass','Bajo'],['sub808','Sub 808'],['synth','Synth']]},
-  {id:'chords',name:'Acordes',emoji:'🎹',color:'#a98fff',kind:'note',opts:[['rhodes','Rhodes'],['piano','Piano'],['organ','Órgano'],['pad','Pad']]},
-  {id:'mel',name:'Melodía',emoji:'🎶',color:'#ffd166',kind:'note',opts:[['synth','Synth'],['lead','Lead'],['piano','Piano'],['pluck','Pluck']]}
+  {id:'bass',name:'Bajo',emoji:'🎸',color:'#58dcaa',kind:'note',opts:[['bass','Bajo'],['sub808','Sub 808'],['synth','Synth'],['pluck','Pluck'],['guitar','Guitarra']]},
+  {id:'chords',name:'Acordes',emoji:'🎹',color:'#a98fff',kind:'note',opts:[['rhodes','Rhodes'],['piano','Piano'],['organ','Órgano'],['pad','Pad'],['guitar','Guitarra'],['pluck','Pluck'],['synth','Synth']]},
+  {id:'mel',name:'Melodía',emoji:'🎶',color:'#ffd166',kind:'note',opts:[['synth','Synth'],['lead','Lead'],['piano','Piano'],['pluck','Pluck'],['organ','Órgano'],['rhodes','Rhodes'],['pad','Pad'],['guitar','Guitarra']]}
 ];
 var DEFINST={drums:'acoustic',bass:'bass',chords:'rhodes',mel:'synth'};
 var PATS={
@@ -287,7 +288,7 @@ function meters(zero){
     var pk=0;
     if(!zero){x.an.getByteTimeDomainData(x.buf);for(var k=0;k<x.buf.length;k++){var v=Math.abs(x.buf[k]-128)/128;if(v>pk)pk=v}}
     S.lvl[i]=Math.max(pk,S.lvl[i]*.86);if(zero)S.lvl[i]=0;
-    var el=root.querySelector('[data-m="'+i+'"]');if(el)el.style.transform='scaleX('+clamp(S.lvl[i]*1.7,0,1).toFixed(3)+')';
+    var el=root.querySelector('[data-m="'+i+'"]');if(el)el.style.transform='scaleY('+clamp(S.lvl[i]*1.7,0,1).toFixed(3)+')';
   });
 }
 
@@ -366,42 +367,49 @@ function renderBar(){
   var el=root.querySelector('.pd-bar');if(!el)return;
   var nm=nextMis();
   var keys=NAMES.map(function(n,i){return '<option value="'+i+'"'+(P.root===i?' selected':'')+'>'+n+'</option>'}).join('');
+  var modes=MODES.map(function(m){return '<option value="'+m[0]+'"'+(P.mode===m[0]?' selected':'')+'>'+m[1]+'</option>'}).join('');
   el.innerHTML=
-    '<button class="pd-play'+(S.on?' on':'')+(M.done.indexOf('play')<0&&!S.on?' pulse':'')+'" data-a="play" aria-label="'+(S.on?'Parar':'Tocar')+'">'+(S.on?ICON.stop:ICON.play)+'</button>'
-    +'<button class="pd-rec'+(S.rec?' on':'')+'" data-a="rec" aria-pressed="'+S.rec+'" aria-label="Grabar" title="Grabar lo que toques en el clip">'+ICON.rec+'</button>'
-    +'<button class="pd-metro'+(P.metro?' on':'')+'" data-a="metro" aria-pressed="'+!!P.metro+'" aria-label="Metrónomo" title="Metrónomo">♩</button>'
-    +'<label class="pd-tempo"><span>Tempo</span><input type="range" class="pd-bpm" min="60" max="180" value="'+P.bpm+'" aria-label="Tempo"><b>'+P.bpm+'</b></label>'
-    +'<label class="pd-sel"><span>Tono</span><select data-a="key" aria-label="Tonalidad">'+keys+'</select></label>'
-    +'<div class="seg pd-mode" role="group" aria-label="Modo"><button data-a="mode" data-v="maj" aria-pressed="'+(P.mode==='maj')+'">Mayor</button><button data-a="mode" data-v="min" aria-pressed="'+(P.mode==='min')+'">Menor</button></div>'
-    +'<div class="seg pd-view" role="group" aria-label="Vista"><button data-a="view" data-v="ses" aria-pressed="'+(S.view==='ses')+'">Sesión</button><button data-a="view" data-v="arr" aria-pressed="'+(S.view==='arr')+'">Línea de tiempo</button></div>'
-    +'<button class="pd-star" data-a="mis" title="'+(nm?esc(nm.t):'¡Todas las misiones!')+'">⭐ <b>'+misCount()+'/'+MIS.length+'</b><span>'+(nm?esc(nm.t):'¡Eres productor!')+'</span></button>'
-    +'<button class="pd-proj" data-a="proj" aria-label="Proyectos">☰ <span>Proyecto</span></button>';
+    '<button class="pd-exit" data-a="exit" aria-label="Salir del Productor">‹</button>'
+    +'<div class="pd-bx pd-tmp"><span class="pd-lab">TEMPO</span><button class="pd-st1" data-a="bpm" data-v="-1" aria-label="Más lento">−</button><b class="pd-num" data-drag="bpm" title="Arrastra arriba o abajo">'+P.bpm+'.00</b><button class="pd-st1" data-a="bpm" data-v="1" aria-label="Más rápido">+</button></div>'
+    +'<button class="pd-tb2 pd-metro'+(P.metro?' on':'')+'" data-a="metro" aria-pressed="'+!!P.metro+'" aria-label="Metrónomo" title="Metrónomo"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 21 10.5 4h3L16 21zM12 8l5-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg></button>'
+    +'<div class="pd-tp"><button class="pd-play'+(S.on?' on':'')+(M.done.indexOf('play')<0&&!S.on?' pulse':'')+'" data-a="play" aria-label="Tocar">'+ICON.play+'</button>'
+    +'<button class="pd-stopb" data-a="stopall" aria-label="Parar">'+ICON.stop+'</button>'
+    +'<button class="pd-rec'+(S.rec?' on':'')+'" data-a="rec" aria-pressed="'+S.rec+'" aria-label="Grabar" title="Grabar lo que toques en el clip">'+ICON.rec+'</button></div>'
+    +'<div class="pd-bx pd-keyb"><span class="pd-lab">TONO</span><select data-a="key" aria-label="Tonalidad">'+keys+'</select><select data-a="modesel" aria-label="Escala">'+modes+'</select></div>'
+    +'<div class="pd-views" role="group" aria-label="Vista"><button data-a="view" data-v="ses" aria-pressed="'+(S.view==='ses')+'" title="Sesión"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4v16M10 4v16M15 4v16M20 4v16" stroke="currentColor" stroke-width="2.6"/></svg><span>Sesión</span></button><button data-a="view" data-v="arr" aria-pressed="'+(S.view==='arr')+'" title="Línea de tiempo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 7h10M8 12h13M3 17h9" stroke="currentColor" stroke-width="3"/></svg><span>Línea</span></button></div>'
+    +'<button class="pd-star" data-a="mis" title="'+(nm?esc(nm.t):'¡Todas las misiones!')+'">⭐ <b>'+misCount()+'/'+MIS.length+'</b></button>'
+    +'<button class="pd-proj" data-a="proj" aria-label="Proyectos">☰</button>';
 }
 function slotHTML(i,c){
   var clip=P.tr[i].clips[c],T=TR[i];
   return '<div class="pd-slot'+(clip?'':' empty')+'" data-t="'+i+'" data-c="'+c+'" style="--c:'+T.color+'">'
     +'<button class="pd-go" data-a="launch" data-t="'+i+'" data-c="'+c+'" aria-label="'+(clip?'Lanzar clip':'Parar pista')+'">'+(clip?ICON.go:ICON.sq)+'</button>'
     +'<button class="pd-cb" data-a="slot" data-t="'+i+'" data-c="'+c+'" aria-label="Editar clip '+SCENES[c]+' de '+T.name+'">'
-    +(clip?mini(i,clip)+'<span class="pd-cn">'+clip.bars+(clip.bars>1?' compases':' compás')+'</span>':'<span class="pd-plus">+</span>')+'</button></div>';
+    +(clip?'<span class="pd-cn">'+SCENES[c]+'</span>'+mini(i,clip):'')+'</button></div>';
+}
+function vfHTML(f,t,val,max,cls){
+  return '<div class="pd-vf '+(cls||'')+'" data-f="'+f+'" data-t="'+t+'" data-max="'+max+'" style="--v:'+(val/max).toFixed(3)+'" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="'+val+'"><i class="pd-fl"></i><i class="pd-fk"></i></div>';
 }
 function sessionHTML(){
   var h='<div class="pd-ses"><div class="pd-sgrid">';
   TR.forEach(function(T,i){
-    h+='<div class="pd-th" style="--c:'+T.color+'"><span class="pd-te">'+T.emoji+'</span><span class="pd-tn"><b>'+T.name+'</b><small>'+esc(instLabel(i))+'</small></span><button class="pd-st" data-a="stoptrack" data-t="'+i+'" aria-label="Parar '+T.name+'">'+ICON.sq+'</button></div>';
+    h+='<div class="pd-th" style="--c:'+T.color+'"><b>'+(i+1)+' '+T.name+'</b><small>'+esc(instLabel(i))+'</small></div>';
   });
   h+='<div class="pd-th pd-sh"><b>Escenas</b></div>';
   for(var c=0;c<NS;c++){
     TR.forEach(function(T,i){h+=slotHTML(i,c)});
-    h+='<button class="pd-scene" data-a="scene" data-c="'+c+'"><span class="pd-sgo">'+ICON.go+'</span><b>'+SCENES[c]+'</b></button>';
+    h+='<button class="pd-scene" data-a="scene" data-c="'+c+'"><span class="pd-sgo">'+ICON.go+'</span><b>'+(c+1)+' '+SCENES[c]+'</b></button>';
   }
+  TR.forEach(function(T,i){h+='<button class="pd-stp" data-a="stoptrack" data-t="'+i+'" aria-label="Parar '+T.name+'">'+ICON.sq+'</button>'});
+  h+='<button class="pd-stp all" data-a="stopall">'+ICON.sq+' <span>Parar todo</span></button>';
   TR.forEach(function(T,i){
     var t=P.tr[i];
-    h+='<div class="pd-mx" style="--c:'+T.color+'"><div class="pd-fader"><i class="pd-meter" data-m="'+i+'"></i><input type="range" class="pd-vol" data-t="'+i+'" min="0" max="1" step=".01" value="'+t.vol+'" aria-label="Volumen '+T.name+'"></div>'
-      +'<div class="pd-mxr"><button class="pd-ms'+(t.mute?' on':'')+'" data-a="mute" data-t="'+i+'" aria-pressed="'+!!t.mute+'" aria-label="Silenciar '+T.name+'">M</button>'
-      +'<button class="pd-ms solo'+(S.solo[i]?' on':'')+'" data-a="solo" data-t="'+i+'" aria-pressed="'+!!S.solo[i]+'" aria-label="Solo '+T.name+'">S</button>'
-      +'<label class="pd-eco"><span>Eco</span><input type="range" class="pd-send" data-t="'+i+'" min="0" max=".7" step=".01" value="'+t.send+'" aria-label="Eco '+T.name+'"></label></div></div>';
+    h+='<div class="pd-mx" style="--c:'+T.color+'"><div class="pd-mxf">'+vfHTML('vol',i,t.vol,1)+'<i class="pd-vm"><b data-m="'+i+'"></b></i>'+vfHTML('send',i,t.send,.7,'small')+'</div>'
+      +'<div class="pd-mxb"><button class="pd-ms'+(t.mute?'':' act')+'" data-a="mute" data-t="'+i+'" aria-pressed="'+!!t.mute+'" aria-label="Silenciar '+T.name+'" title="Silenciar">'+(i+1)+'</button>'
+      +'<button class="pd-ms solo'+(S.solo[i]?' on':'')+'" data-a="solo" data-t="'+i+'" aria-pressed="'+!!S.solo[i]+'" aria-label="Solo '+T.name+'" title="Solo">S</button>'
+      +'<span class="pd-fl2">VOL · ECO</span></div></div>';
   });
-  h+='<div class="pd-mx pd-master"><div class="pd-fader"><input type="range" class="pd-mvol" min="0" max="1" step=".01" value="'+P.master+'" aria-label="Volumen general"></div><div class="pd-mxr"><b>General</b></div></div>';
+  h+='<div class="pd-mx pd-master"><div class="pd-mxf">'+vfHTML('mvol',0,P.master,1)+'<i class="pd-vm"><b data-m="m"></b></i></div><div class="pd-mxb"><span class="pd-fl2">GENERAL</span></div></div>';
   return h+'</div></div>';
 }
 function arrHTML(){
@@ -452,7 +460,7 @@ function paintStates(){
 
 /* ---- editor de clip ---- */
 function detailHTML(){
-  var h='<div class="pd-tabs"><div class="seg" role="group" aria-label="Panel"><button data-a="panel" data-v="clip" aria-pressed="'+(S.panel==='clip')+'">Clip</button><button data-a="panel" data-v="keys" aria-pressed="'+(S.panel==='keys')+'">Teclado</button></div>';
+  var h='<div class="pd-tabs"><button class="pd-dx" data-a="dclose" aria-label="Cerrar editor">▾</button><div class="seg" role="group" aria-label="Panel"><button data-a="panel" data-v="clip" aria-pressed="'+(S.panel==='clip')+'">Clip</button><button data-a="panel" data-v="keys" aria-pressed="'+(S.panel==='keys')+'">Teclado</button></div>';
   h+=headerHTML()+'</div>';
   return h+(S.panel==='clip'?clipHTML():keysHTML());
 }
@@ -611,13 +619,17 @@ function onClick(e){
     case 'play':if(S.on)stop();else play(S.view==='arr'?'arr':'ses');break;
     case 'rec':toggleRec();break;
     case 'metro':P.metro=!P.metro;save();renderBar();break;
+    case 'exit':{var hm=(R.profile&&R.profile.home)||'afinador';R.setTab(hm==='productor'?'afinador':hm);break}
+    case 'bpm':P.bpm=clamp(P.bpm+(+v),60,180);save();mission('bpm');renderBar();break;
+    case 'stopall':if(S.on)stop();break;
+    case 'dclose':root.querySelector('.pd').classList.remove('dopen');break;
     case 'mode':P.mode=v;save();mission('key');renderBar();renderMain();renderDetail();break;
     case 'view':if(S.view!==v){if(S.on)stop();S.view=v;renderBar();renderMain()}break;
     case 'mis':openModal('mis');break;
     case 'proj':openModal('proj');break;
     case 'close':closeModal();break;
     case 'launch':launch(t,c);break;
-    case 'slot':selectClip(t,c);break;
+    case 'slot':selectClip(t,c);if(root.querySelector('.pd').classList.contains('compact'))root.querySelector('.pd').classList.add('dopen');break;
     case 'scene':launchScene(c);selectScene(c);break;
     case 'stoptrack':if(S.on&&S.mode==='ses')S.pend[t]=-1;paintStates();break;
     case 'mute':P.tr[t].mute=!P.tr[t].mute;applyMix();save();if(P.tr[t].mute)mission('mix');renderMain();break;
@@ -680,6 +692,7 @@ function onChange(e){
   var el=e.target;
   if(el.classList.contains('pd-vol')||el.classList.contains('pd-send')||el.classList.contains('pd-mvol')){save();mission('mix')}
   else if(el.classList.contains('pd-bpm')){save();mission('bpm')}
+  else if(el.getAttribute('data-a')==='modesel'){P.mode=el.value;save();mission('key');renderBar();renderMain();renderDetail();prevNote(S.sel.t===0?3:S.sel.t,0)}
   else if(el.getAttribute('data-a')==='key'){P.root=+el.value;save();mission('key');renderDetail();if(S.view==='ses')renderMain();prevNote(S.sel.t===0?3:S.sel.t,0)}
 }
 
@@ -688,7 +701,16 @@ function cellAt(e,el){
   var r=el.getBoundingClientRect(),n=+el.getAttribute('data-n'),Rn=+el.getAttribute('data-r');
   return {col:clamp(Math.floor((e.clientX-r.left)/r.width*n),0,n-1),row:clamp(Math.floor((e.clientY-r.top)/r.height*Rn),0,Rn-1),n:n,Rn:Rn};
 }
+function setFader(el,e){
+  var r=el.getBoundingClientRect(),max=+el.getAttribute('data-max'),v=clamp(1-(e.clientY-r.top)/r.height,0,1),f=el.getAttribute('data-f'),t=+el.getAttribute('data-t'),val=+(v*max).toFixed(3);
+  if(f==='vol')P.tr[t].vol=val;else if(f==='send')P.tr[t].send=val;else P.master=val;
+  el.style.setProperty('--v',v.toFixed(3));applyMix();
+}
 function onDown(e){
+  var vf=e.target.closest('.pd-vf');
+  if(vf&&root.contains(vf)){e.preventDefault();try{vf.setPointerCapture(e.pointerId)}catch(x){}D={kind:'fader',el:vf};setFader(vf,e);return}
+  var dg=e.target.closest('[data-drag]');
+  if(dg&&root.contains(dg)){e.preventDefault();try{dg.setPointerCapture(e.pointerId)}catch(x){}D={kind:'drag',el:dg,y:e.clientY,v:P.bpm};return}
   var key=e.target.closest('[data-k]');
   if(key&&root.contains(key)){e.preventDefault();keyDown(e,key);return}
   var el=e.target.closest('.pd-cells');
@@ -716,6 +738,8 @@ function onDown(e){
 }
 function onMove(e){
   if(!D)return;
+  if(D.kind==='fader'){setFader(D.el,e);return}
+  if(D.kind==='drag'){var nb=clamp(Math.round(D.v+(D.y-e.clientY)/5),60,180);if(nb!==P.bpm){P.bpm=nb;D.el.textContent=nb+'.00'}return}
   var clip=curClip();if(!clip){D=null;return}
   var p=cellAt(e,D.el);
   if(D.kind==='drum'){
@@ -728,6 +752,8 @@ function onMove(e){
 }
 function onUp(e){
   keyUp(e);
+  if(D&&D.kind==='fader'){D=null;save();mission('mix');return}
+  if(D&&D.kind==='drag'){D=null;save();mission('bpm');return}
   if(D){D=null;save();if(S.view==='ses')renderMainSoft()}
 }
 function renderMainSoft(){
@@ -774,10 +800,12 @@ function keyUp(e){
 function fit(){
   if(!root)return;
   var pd=root.querySelector('.pd');if(!pd)return;
-  if(window.innerWidth<700||window.innerHeight>window.innerWidth){pd.style.height='';pd.classList.add('flow');return}
+  var W=window.innerWidth,H=window.innerHeight,land=W>H;
+  pd.classList.toggle('compact',land&&H<600);
+  if(!land&&W<900){pd.style.height='';pd.classList.add('flow');pd.classList.remove('dopen');return}
   pd.classList.remove('flow');
-  var top=pd.getBoundingClientRect().top+window.scrollY;
-  pd.style.height=Math.max(430,window.innerHeight-top-10)+'px';
+  pd.style.height=H+'px';
+  if(!pd.classList.contains('compact'))pd.classList.remove('dopen');
 }
 function render(el){
   root=el;
